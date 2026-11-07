@@ -1,2060 +1,232 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
+<html lang="en" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FGCK Mamba Church Management System</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        fgck: {
-                            blue: '#1e3a8a',
-                            light: '#3b82f6',
-                            gold: '#d97706',
-                            dark: '#0f172a'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .sidebar-link.active {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-left: 4px solid #f59e0b;
-            font-weight: 600;
-        }
-        /* Printable area custom styles */
-        @media print {
-            body * { visibility: hidden; }
-            #printModalContent, #printModalContent * { visibility: visible; }
-            #printModalContent { position: absolute; left: 0; top: 0; width: 100%; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FGCK Mamba Church Management System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{font-family:Inter,system-ui,sans-serif}
+.nav.active{background:rgba(255,255,255,.12);border-left:4px solid #f59e0b;font-weight:600}
+.inp{width:100%;padding:.6rem .75rem;border:1px solid #cbd5e1;border-radius:.6rem;font-size:.85rem;background:#fff}
+.inp:focus{outline:2px solid #f59e0b;border-color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.55rem 1rem;border-radius:.6rem;font-size:.75rem;font-weight:700;transition:.15s;cursor:pointer}
+.btn:hover{filter:brightness(.93)}
+button:focus-visible,a:focus-visible{outline:2px solid #f59e0b;outline-offset:2px}
+@media print{body *{visibility:hidden}#pr,#pr *{visibility:visible}#pr button{display:none}#modal{position:static!important;background:none!important}#pr{position:absolute;left:0;top:0;width:100%;max-height:none!important;overflow:visible!important;box-shadow:none!important}}
+</style>
 </head>
-<body class="h-full text-slate-800 flex flex-col antialiased selection:bg-amber-500 selection:text-white">
-
-    <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar Navigation -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-white transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col justify-between shadow-2xl">
-            <div>
-                <!-- Brand Header -->
-                <div class="p-4 border-b border-slate-800 flex items-center space-x-3 bg-slate-950">
-                    <div class="w-10 h-10 rounded-full bg-amber-500 text-slate-900 flex items-center justify-center font-bold text-xl shadow-md">
-                        <i class="fa-solid font-black fa-cross"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold tracking-wide text-sm text-amber-400">FGCK MAMBA</h1>
-                        <p class="text-xs text-slate-400">Management System</p>
-                    </div>
-                </div>
-
-                <div class="px-4 py-2 bg-slate-800/50 text-[11px] text-slate-300 font-medium flex items-center gap-1">
-                    <i class="fa-solid fa-location-dot text-amber-500"></i>
-                    Mamba Town, Machakos County
-                </div>
-
-                <!-- Navigation Items -->
-                <nav class="mt-3 px-2 space-y-1 overflow-y-auto max-h-[calc(100vh-170px)] text-sm">
-                    <a href="#dashboard" class="sidebar-link active flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-chart-line w-5 text-amber-400"></i> Dashboard
-                    </a>
-                    <a href="#members" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-users w-5 text-amber-400"></i> Members
-                    </a>
-                    <a href="#attendance" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-clipboard-user w-5 text-amber-400"></i> Attendance
-                    </a>
-                    <a href="#visitors" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-user-plus w-5 text-amber-400"></i> Visitors
-                    </a>
-                    <a href="#departments" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-sitemap w-5 text-amber-400"></i> Departments
-                    </a>
-                    <a href="#events" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-calendar-days w-5 text-amber-400"></i> Church Events
-                    </a>
-                    <a href="#pastoral" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-hands-holding-child w-5 text-amber-400"></i> Pastoral Care
-                    </a>
-                    <a href="#staff" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-user-tie w-5 text-amber-400"></i> Staff & Volunteers
-                    </a>
-                    <a href="#finance" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-hand-holding-dollar w-5 text-amber-400"></i> Financial Mgt
-                    </a>
-                    <a href="#pledges" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-piggy-bank w-5 text-amber-400"></i> Pledges & Donations
-                    </a>
-                    <a href="#inventory" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-boxes-stacked w-5 text-amber-400"></i> Inventory
-                    </a>
-                    <a href="#reports" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-file-invoice-dollar w-5 text-amber-400"></i> Reports
-                    </a>
-                    <a href="#communications" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-bullhorn w-5 text-amber-400"></i> Communications
-                    </a>
-                    <a href="#admin" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-database w-5 text-amber-400"></i> Admin & DB
-                    </a>
-                    <a href="#settings" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition">
-                        <i class="fa-solid fa-sliders w-5 text-amber-400"></i> Settings
-                    </a>
-                </nav>
-            </div>
-
-            <!-- Sidebar Footer -->
-            <div class="p-3 bg-slate-950 border-t border-slate-800 text-xs text-slate-400 flex items-center justify-between">
-                <span>System v2.5 Persistent</span>
-                <span id="authBadge" class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px]">Ready</span>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col md:ml-64 overflow-hidden bg-slate-100">
-            <!-- Topbar -->
-            <header class="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between shadow-sm z-30">
-                <div class="flex items-center gap-3">
-                    <button id="menuToggle" class="md:hidden text-slate-600 hover:text-slate-900 focus:outline-none p-1 text-xl">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
-                    <div>
-                        <h2 class="font-bold text-slate-800 text-base leading-tight">Church Administration Portal</h2>
-                        <p class="text-xs text-slate-500">Full Gospel Churches Of Kenya (Mamba)</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-4 text-xs md:text-sm">
-                    <div class="hidden sm:flex flex-col text-right">
-                        <span id="currentDate" class="font-semibold text-slate-700"></span>
-                        <span class="text-slate-400 text-xs">East Africa Time (EAT)</span>
-                    </div>
-                    <div class="flex items-center gap-2 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-full">
-                        <div class="w-6 h-6 rounded-full bg-blue-900 text-white flex items-center justify-center text-xs font-bold">
-                            <i class="fa-solid fa-user-shield text-[10px]"></i>
-                        </div>
-                        <span class="font-medium text-slate-700 hidden sm:inline" id="userDisplayRole">Administrator</span>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Main Dynamic Container -->
-            <main class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
-
-                <!-- Dynamic Alert Toast -->
-                <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-md"></div>
-
-                <!-- SECTION: DASHBOARD -->
-                <section id="dashboard" class="page-section space-y-6">
-                    <!-- Welcome Hero -->
-                    <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl p-6 text-white shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
-                        <div class="space-y-2 text-center md:text-left">
-                            <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs px-3 py-1 rounded-full font-semibold uppercase tracking-wider">Official Portal</span>
-                            <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">FULL GOSPEL CHURCHES OF KENYA</h1>
-                            <h2 class="text-xl font-bold text-amber-400">MAMBA SANCTUARY</h2>
-                            <p class="text-slate-300 text-sm max-w-xl">Mamba Town, Kithimani Ward, Machakos County, Kenya. Empowering community faith, fellowship, and divine service through modern admin management.</p>
-                        </div>
-                        <div class="w-24 h-24 rounded-full bg-white/10 border-2 border-amber-400/50 flex items-center justify-center text-amber-400 text-4xl shadow-inner shrink-0">
-                            <i class="fa-solid fa-church"></i>
-                        </div>
-                    </div>
-
-                    <!-- Statistics Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Members</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1" id="statMembers">0</h3>
-                                <p class="text-xs text-emerald-600 mt-1"><i class="fa-solid fa-user-check"></i> Active Register</p>
-                            </div>
-                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-users"></i>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Recent Sunday Service</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1" id="statAttendance">0</h3>
-                                <p class="text-xs text-blue-600 mt-1"><i class="fa-solid fa-calendar"></i> Latest Record</p>
-                            </div>
-                            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-clipboard-user"></i>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Income (KES)</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1" id="statIncome">0</h3>
-                                <p class="text-xs text-amber-600 mt-1"><i class="fa-solid fa-arrow-trend-up"></i> Financial Log</p>
-                            </div>
-                            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-money-bill-wave"></i>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Active Departments</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1" id="statDepts">8</h3>
-                                <p class="text-xs text-indigo-600 mt-1"><i class="fa-solid fa-sitemap"></i> Ministries</p>
-                            </div>
-                            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-building-user"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div>
-                        <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-bolt text-amber-500"></i> Quick Actions
-                        </h3>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                            <a href="#members" onclick="switchSection('members')" class="bg-white p-4 rounded-xl border border-slate-200 hover:border-amber-500 hover:shadow-md transition text-center group">
-                                <i class="fa-solid fa-user-plus text-2xl text-blue-600 group-hover:scale-110 transition-transform mb-2 block"></i>
-                                <span class="text-xs font-semibold text-slate-700">Add Member</span>
-                            </a>
-                            <a href="#attendance" onclick="switchSection('attendance')" class="bg-white p-4 rounded-xl border border-slate-200 hover:border-amber-500 hover:shadow-md transition text-center group">
-                                <i class="fa-solid fa-clipboard-list text-2xl text-emerald-600 group-hover:scale-110 transition-transform mb-2 block"></i>
-                                <span class="text-xs font-semibold text-slate-700">Record Attendance</span>
-                            </a>
-                            <a href="#finance" onclick="switchSection('finance')" class="bg-white p-4 rounded-xl border border-slate-200 hover:border-amber-500 hover:shadow-md transition text-center group">
-                                <i class="fa-solid fa-file-circle-plus text-2xl text-amber-600 group-hover:scale-110 transition-transform mb-2 block"></i>
-                                <span class="text-xs font-semibold text-slate-700">Record Transaction</span>
-                            </a>
-                            <a href="#events" onclick="switchSection('events')" class="bg-white p-4 rounded-xl border border-slate-200 hover:border-amber-500 hover:shadow-md transition text-center group">
-                                <i class="fa-solid fa-calendar-plus text-2xl text-indigo-600 group-hover:scale-110 transition-transform mb-2 block"></i>
-                                <span class="text-xs font-semibold text-slate-700">Create Event</span>
-                            </a>
-                            <a href="#visitors" onclick="switchSection('visitors')" class="bg-white p-4 rounded-xl border border-slate-200 hover:border-amber-500 hover:shadow-md transition text-center group">
-                                <i class="fa-solid fa-address-book text-2xl text-teal-600 group-hover:scale-110 transition-transform mb-2 block"></i>
-                                <span class="text-xs font-semibold text-slate-700">Add Visitor</span>
-                            </a>
-                            <a href="#reports" onclick="switchSection('reports')" class="bg-white p-4 rounded-xl border border-slate-200 hover:border-amber-500 hover:shadow-md transition text-center group">
-                                <i class="fa-solid fa-chart-pie text-2xl text-rose-600 group-hover:scale-110 transition-transform mb-2 block"></i>
-                                <span class="text-xs font-semibold text-slate-700">View Reports</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity Summary Grid -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                            <div class="flex justify-between items-center mb-4">
-                                <h4 class="font-bold text-slate-800 text-sm">Recent Members Registered</h4>
-                                <a href="#members" onclick="switchSection('members')" class="text-xs text-blue-600 font-semibold hover:underline">View All</a>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-xs text-left">
-                                    <thead class="bg-slate-50 text-slate-500 uppercase font-semibold border-b">
-                                        <tr>
-                                            <th class="p-2">Name</th>
-                                            <th class="p-2">Phone</th>
-                                            <th class="p-2">Department</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="dashMembersTable" class="divide-y divide-slate-100 text-slate-700">
-                                        <!-- Dynamic load -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                            <div class="flex justify-between items-center mb-4">
-                                <h4 class="font-bold text-slate-800 text-sm">Recent Financial Transactions</h4>
-                                <a href="#finance" onclick="switchSection('finance')" class="text-xs text-blue-600 font-semibold hover:underline">View All</a>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-xs text-left">
-                                    <thead class="bg-slate-50 text-slate-500 uppercase font-semibold border-b">
-                                        <tr>
-                                            <th class="p-2">Category</th>
-                                            <th class="p-2">Type</th>
-                                            <th class="p-2">Amount (KES)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="dashFinanceTable" class="divide-y divide-slate-100 text-slate-700">
-                                        <!-- Dynamic load -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: MEMBERS -->
-                <section id="members" class="page-section hidden space-y-6">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-slate-800">Member Management</h2>
-                            <p class="text-xs text-slate-500">Register, search, update, and manage member profiles.</p>
-                        </div>
-                        <input type="text" id="memberSearch" oninput="renderMembers()" placeholder="Search members..." class="px-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white w-full sm:w-64 shadow-sm">
-                    </div>
-
-                    <!-- Member Registration Form -->
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-base mb-4 pb-2 border-b flex items-center justify-between">
-                            <span id="memberFormTitle"><i class="fa-solid fa-user-plus text-blue-600 mr-2"></i> Register New Member</span>
-                            <button id="cancelEditMemberBtn" onclick="resetMemberForm()" class="hidden text-xs text-slate-500 hover:text-rose-600"><i class="fa-solid fa-xmark"></i> Cancel Edit</button>
-                        </h3>
-                        <form id="memberForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-medium">
-                            <input type="hidden" id="memberEditId">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Full Name *</label>
-                                <input type="text" id="mName" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Membership No. (Auto/Custom)</label>
-                                <input type="text" id="mNumber" placeholder="FGCK-MB-001" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Gender *</label>
-                                <select id="mGender" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option>Male</option>
-                                    <option>Female</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Date of Birth</label>
-                                <input type="date" id="mDob" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Phone Number *</label>
-                                <input type="tel" id="mPhone" required placeholder="0712345678" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Email</label>
-                                <input type="email" id="mEmail" placeholder="member@fgckmamba.org" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Department</label>
-                                <select id="mDept" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option>Worship Team</option>
-                                    <option>Youth Ministry</option>
-                                    <option>Children Ministry</option>
-                                    <option>Men Ministry</option>
-                                    <option>Women Ministry</option>
-                                    <option>Prayer Ministry</option>
-                                    <option>Media Ministry</option>
-                                    <option>Ushering</option>
-                                    <option>General Member</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Date Joined</label>
-                                <input type="date" id="mDateJoined" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="sm:col-span-2 lg:col-span-3">
-                                <label class="block text-slate-600 mb-1">Residential Address</label>
-                                <input type="text" id="mAddress" placeholder="Village / Estate / Town" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="flex items-end">
-                                <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-floppy-disk"></i> <span id="saveMemberBtnText">Save Member</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Members List Table -->
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-4 bg-slate-50 border-b flex justify-between items-center">
-                            <h3 class="font-bold text-slate-800 text-sm">Church Member Roll</h3>
-                            <span class="text-xs text-slate-500" id="memberCountBadge">0 Total</span>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold border-b">
-                                    <tr>
-                                        <th class="p-3">No.</th>
-                                        <th class="p-3">Name</th>
-                                        <th class="p-3">Gender</th>
-                                        <th class="p-3">Phone</th>
-                                        <th class="p-3">Department</th>
-                                        <th class="p-3">Address</th>
-                                        <th class="p-3 text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="membersTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: ATTENDANCE -->
-                <section id="attendance" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Attendance Management</h2>
-                        <p class="text-xs text-slate-500">Record and track headcount across services.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-base mb-4 pb-2 border-b">
-                            <i class="fa-solid fa-clipboard-user text-emerald-600 mr-2"></i> Record Service Attendance
-                        </h3>
-                        <form id="attendanceForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-medium">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Service Type *</label>
-                                <select id="attService" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option>Sunday Service</option>
-                                    <option>Midweek Service</option>
-                                    <option>Prayer Meeting</option>
-                                    <option>Youth Fellowship</option>
-                                    <option>Special Crusade</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Date *</label>
-                                <input type="date" id="attDate" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Men Count</label>
-                                <input type="number" min="0" value="0" id="attMen" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Women Count</label>
-                                <input type="number" min="0" value="0" id="attWomen" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Children Count</label>
-                                <input type="number" min="0" value="0" id="attChildren" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Visitors Count</label>
-                                <input type="number" min="0" value="0" id="attVisitors" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="sm:col-span-2 lg:col-span-3">
-                                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-floppy-disk"></i> Save Attendance Record
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Attendance Log -->
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-4 bg-slate-50 border-b font-bold text-slate-800 text-sm">Attendance History Log</div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold border-b">
-                                    <tr>
-                                        <th class="p-3">Date</th>
-                                        <th class="p-3">Service</th>
-                                        <th class="p-3">Men</th>
-                                        <th class="p-3">Women</th>
-                                        <th class="p-3">Children</th>
-                                        <th class="p-3">Visitors</th>
-                                        <th class="p-3">Total</th>
-                                        <th class="p-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="attendanceTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic content -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: VISITORS -->
-                <section id="visitors" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Visitor Management</h2>
-                        <p class="text-xs text-slate-500">Track and follow up with first-time church guests.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-base mb-4 pb-2 border-b">
-                            <i class="fa-solid fa-user-plus text-teal-600 mr-2"></i> Register Church Visitor
-                        </h3>
-                        <form id="visitorForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-medium">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Visitor Name *</label>
-                                <input type="text" id="vName" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Phone Number *</label>
-                                <input type="tel" id="vPhone" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Date of Visit *</label>
-                                <input type="date" id="vDate" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Follow-up Person</label>
-                                <input type="text" id="vFollowup" placeholder="Usher / Leader Name" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="sm:col-span-2 lg:col-span-3">
-                                <label class="block text-slate-600 mb-1">Comments / Prayer Requests</label>
-                                <input type="text" id="vComments" placeholder="First time guest, interested in youth ministry..." class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="flex items-end">
-                                <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-floppy-disk"></i> Save Visitor
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-4 bg-slate-50 border-b font-bold text-slate-800 text-sm">Visitor Log & Follow-up</div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold border-b">
-                                    <tr>
-                                        <th class="p-3">Visitor Name</th>
-                                        <th class="p-3">Phone</th>
-                                        <th class="p-3">Visit Date</th>
-                                        <th class="p-3">Assigned Follow-up</th>
-                                        <th class="p-3">Comments</th>
-                                        <th class="p-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="visitorsTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: DEPARTMENTS -->
-                <section id="departments" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Church Departments & Ministries</h2>
-                        <p class="text-xs text-slate-500">Active ministries serving FGCK Mamba.</p>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="deptsGrid">
-                        <!-- Dynamic rendered cards -->
-                    </div>
-                </section>
-
-                <!-- SECTION: CHURCH EVENTS -->
-                <section id="events" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Church Events</h2>
-                        <p class="text-xs text-slate-500">Plan and publish upcoming church calendar events.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-base mb-4 pb-2 border-b">
-                            <i class="fa-solid fa-calendar-plus text-indigo-600 mr-2"></i> Create Church Event
-                        </h3>
-                        <form id="eventForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-medium">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Event Name *</label>
-                                <input type="text" id="evName" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Category</label>
-                                <select id="evCategory" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option>Worship</option>
-                                    <option>Conference</option>
-                                    <option>Crusade</option>
-                                    <option>Prayer Meeting</option>
-                                    <option>Seminar</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Event Date *</label>
-                                <input type="date" id="evDate" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Event Time</label>
-                                <input type="time" id="evTime" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Venue</label>
-                                <input type="text" id="evVenue" placeholder="Main Sanctuary / Hall" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="sm:col-span-2 lg:col-span-3">
-                                <label class="block text-slate-600 mb-1">Event Description</label>
-                                <input type="text" id="evDesc" placeholder="Brief event details..." class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-floppy-disk"></i> Save Event
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-4 bg-slate-50 border-b font-bold text-slate-800 text-sm">Upcoming Church Events Schedule</div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold border-b">
-                                    <tr>
-                                        <th class="p-3">Event</th>
-                                        <th class="p-3">Category</th>
-                                        <th class="p-3">Date & Time</th>
-                                        <th class="p-3">Venue</th>
-                                        <th class="p-3">Description</th>
-                                        <th class="p-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="eventsTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: PASTORAL CARE -->
-                <section id="pastoral" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Pastoral Care & Visitation</h2>
-                        <p class="text-xs text-slate-500">Record prayer requests, counseling sessions, and pastoral care logs.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-base mb-4 pb-2 border-b">
-                            <i class="fa-solid fa-hands-holding-child text-purple-600 mr-2"></i> Log Pastoral Session / Prayer Request
-                        </h3>
-                        <form id="pastoralForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-medium">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Member / Individual Name *</label>
-                                <input type="text" id="pastName" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Care Type</label>
-                                <select id="pastType" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option>Prayer Request</option>
-                                    <option>Counselling Session</option>
-                                    <option>Home Visitation</option>
-                                    <option>Hospital Visitation</option>
-                                    <option>Pastoral Appointment</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Date *</label>
-                                <input type="date" id="pastDate" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="sm:col-span-2 lg:col-span-3">
-                                <label class="block text-slate-600 mb-1">Notes / Action Details</label>
-                                <input type="text" id="pastNotes" placeholder="Summary of session or prayer needs..." class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-6 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-floppy-disk"></i> Log Pastoral Record
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-4 bg-slate-50 border-b font-bold text-slate-800 text-sm">Pastoral Care Records</div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold border-b">
-                                    <tr>
-                                        <th class="p-3">Name</th>
-                                        <th class="p-3">Care Type</th>
-                                        <th class="p-3">Date</th>
-                                        <th class="p-3">Notes</th>
-                                        <th class="p-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pastoralTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: STAFF & VOLUNTEERS -->
-                <section id="staff" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Staff & Volunteers Management</h2>
-                        <p class="text-xs text-slate-500">Manage church leadership, ministers, staff, and ministry heads.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-base mb-4 pb-2 border-b">
-                            <i class="fa-solid fa-user-tie text-blue-700 mr-2"></i> Register Staff / Volunteer
-                        </h3>
-                        <form id="staffForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-medium">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Full Name *</label>
-                                <input type="text" id="stName" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Phone Number *</label>
-                                <input type="tel" id="stPhone" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Position / Role *</label>
-                                <input type="text" id="stRole" placeholder="Senior Pastor, Usher Lead, Accountant" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Department</label>
-                                <input type="text" id="stDept" placeholder="Pastoral, Media, Praise Team" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="flex items-end sm:col-span-2 lg:col-span-4 justify-end">
-                                <button type="submit" class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2.5 px-6 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-floppy-disk"></i> Save Staff Member
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-4 bg-slate-50 border-b font-bold text-slate-800 text-sm">Active Staff & Volunteers Directory</div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold border-b">
-                                    <tr>
-                                        <th class="p-3">Name</th>
-                                        <th class="p-3">Role</th>
-                                        <th class="p-3">Department</th>
-                                        <th class="p-3">Phone</th>
-                                        <th class="p-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="staffTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic content -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: FINANCIAL MANAGEMENT -->
-                <section id="finance" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Financial Management</h2>
-                        <p class="text-xs text-slate-500">Record tithes, offerings, donations, building fund & church expenses.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-base mb-4 pb-2 border-b">
-                            <i class="fa-solid fa-hand-holding-dollar text-amber-600 mr-2"></i> Record Financial Transaction
-                        </h3>
-                        <form id="financeForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-medium">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Transaction Type *</label>
-                                <select id="finType" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option value="Income">Income (Received)</option>
-                                    <option value="Expense">Expense (Paid Out)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Category *</label>
-                                <select id="finCategory" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option>Tithes</option>
-                                    <option>Sunday Offering</option>
-                                    <option>Thanksgiving</option>
-                                    <option>Building Fund</option>
-                                    <option>Missions & Outreach</option>
-                                    <option>Salaries & Allowances</option>
-                                    <option>Utilities & Maintenance</option>
-                                    <option>Equipment & Sound</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Amount (KES) *</label>
-                                <input type="number" id="finAmount" min="0" step="0.01" required placeholder="0.00" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Payment Method</label>
-                                <select id="finMethod" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option>Cash</option>
-                                    <option>M-Pesa</option>
-                                    <option>Bank Transfer</option>
-                                    <option>Cheque</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Transaction Date *</label>
-                                <input type="date" id="finDate" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Reference No. (M-Pesa / Receipt)</label>
-                                <input type="text" id="finRef" placeholder="RKN782910" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="sm:col-span-2 lg:col-span-3">
-                                <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-6 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-floppy-disk"></i> Save Transaction Record
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-4 bg-slate-50 border-b flex justify-between items-center">
-                            <h3 class="font-bold text-slate-800 text-sm">Financial Transaction History</h3>
-                            <div id="financialBalanceBadge" class="text-xs font-bold px-3 py-1 bg-slate-200 text-slate-800 rounded-full">Net Balance: KES 0</div>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold border-b">
-                                    <tr>
-                                        <th class="p-3">Date</th>
-                                        <th class="p-3">Type</th>
-                                        <th class="p-3">Category</th>
-                                        <th class="p-3">Method</th>
-                                        <th class="p-3">Ref No.</th>
-                                        <th class="p-3">Amount (KES)</th>
-                                        <th class="p-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="financeTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: PLEDGES & DONATIONS -->
-                <section id="pledges" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Pledges & Donations</h2>
-                        <p class="text-xs text-slate-500">Track church development pledges and balance fulfillments.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-base mb-4 pb-2 border-b">
-                            <i class="fa-solid fa-piggy-bank text-yellow-600 mr-2"></i> Register Pledge / Target Donation
-                        </h3>
-                        <form id="pledgeForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-medium">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Donor Name *</label>
-                                <input type="text" id="plName" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Pledge Purpose / Project *</label>
-                                <input type="text" id="plPurpose" placeholder="New Sanctuary Chairs, Bus Purchase..." required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Pledged Amount (KES) *</label>
-                                <input type="number" id="plPledged" min="0" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Amount Paid (KES)</label>
-                                <input type="number" id="plPaid" min="0" value="0" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Target Due Date</label>
-                                <input type="date" id="plDueDate" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="flex items-end">
-                                <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-floppy-disk"></i> Save Pledge
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-4 bg-slate-50 border-b font-bold text-slate-800 text-sm">Pledge Trackers List</div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold border-b">
-                                    <tr>
-                                        <th class="p-3">Donor</th>
-                                        <th class="p-3">Project / Purpose</th>
-                                        <th class="p-3">Pledged (KES)</th>
-                                        <th class="p-3">Paid (KES)</th>
-                                        <th class="p-3">Balance (KES)</th>
-                                        <th class="p-3">Due Date</th>
-                                        <th class="p-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pledgesTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic content -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: INVENTORY -->
-                <section id="inventory" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Inventory & Asset Management</h2>
-                        <p class="text-xs text-slate-500">Track church physical assets, equipment, instrument quality, and valuations.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-base mb-4 pb-2 border-b">
-                            <i class="fa-solid fa-boxes-stacked text-orange-600 mr-2"></i> Register Church Asset
-                        </h3>
-                        <form id="inventoryForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-medium">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Asset / Equipment Name *</label>
-                                <input type="text" id="invName" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Category</label>
-                                <input type="text" id="invCategory" placeholder="Sound Equipment, Furniture, Vehicles" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Purchase Date</label>
-                                <input type="date" id="invDate" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Estimated Value (KES)</label>
-                                <input type="number" id="invValue" min="0" placeholder="0.00" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Current Condition</label>
-                                <select id="invCondition" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option>New / Excellent</option>
-                                    <option>Good</option>
-                                    <option>Needs Repair</option>
-                                    <option>Faulty / Scrap</option>
-                                </select>
-                            </div>
-                            <div class="flex items-end">
-                                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-floppy-disk"></i> Save Asset
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-4 bg-slate-50 border-b font-bold text-slate-800 text-sm">Church Asset Inventory Log</div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold border-b">
-                                    <tr>
-                                        <th class="p-3">Asset</th>
-                                        <th class="p-3">Category</th>
-                                        <th class="p-3">Purchase Date</th>
-                                        <th class="p-3">Value (KES)</th>
-                                        <th class="p-3">Condition</th>
-                                        <th class="p-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="inventoryTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: REPORTS -->
-                <section id="reports" class="page-section hidden space-y-6">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h2 class="text-2xl font-bold text-slate-800">Church Administrative Reports</h2>
-                            <p class="text-xs text-slate-500">Generate printable summaries of members, finances, and attendance.</p>
-                        </div>
-                        <button onclick="printSummaryReport()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-semibold shadow flex items-center gap-2">
-                            <i class="fa-solid fa-print"></i> Print Full Summary Report
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                            <i class="fa-solid fa-users text-3xl text-blue-600 mb-2"></i>
-                            <h3 class="font-bold text-slate-800 text-sm">Membership Report</h3>
-                            <p class="text-xs text-slate-500 mt-1" id="reportMemberSummary">0 total members registered in system.</p>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                            <i class="fa-solid fa-clipboard-user text-3xl text-emerald-600 mb-2"></i>
-                            <h3 class="font-bold text-slate-800 text-sm">Attendance Trends</h3>
-                            <p class="text-xs text-slate-500 mt-1" id="reportAttendanceSummary">0 services recorded total.</p>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                            <i class="fa-solid fa-hand-holding-dollar text-3xl text-amber-600 mb-2"></i>
-                            <h3 class="font-bold text-slate-800 text-sm">Financial Health</h3>
-                            <p class="text-xs text-slate-500 mt-1" id="reportFinanceSummary">KES 0 recorded total revenue.</p>
-                        </div>
-
-                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                            <i class="fa-solid fa-piggy-bank text-3xl text-yellow-600 mb-2"></i>
-                            <h3 class="font-bold text-slate-800 text-sm">Pledges Outstanding</h3>
-                            <p class="text-xs text-slate-500 mt-1" id="reportPledgeSummary">KES 0 uncollected balance.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: COMMUNICATIONS -->
-                <section id="communications" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Church Communications</h2>
-                        <p class="text-xs text-slate-500">Compose and log SMS, Email, and WhatsApp notices.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-base mb-4 pb-2 border-b">
-                            <i class="fa-solid fa-bullhorn text-sky-600 mr-2"></i> Dispatch New Communication
-                        </h3>
-                        <form id="commForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-medium">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Announcement Title *</label>
-                                <input type="text" id="commTitle" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Target Group</label>
-                                <select id="commRecipients" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option>All Members</option>
-                                    <option>Youth Ministry</option>
-                                    <option>Men Ministry</option>
-                                    <option>Women Ministry</option>
-                                    <option>Church Leadership</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Channel</label>
-                                <select id="commChannel" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                                    <option>SMS Broadcast</option>
-                                    <option>Email Notice</option>
-                                    <option>WhatsApp Group</option>
-                                </select>
-                            </div>
-                            <div class="sm:col-span-2 lg:col-span-3">
-                                <label class="block text-slate-600 mb-1">Message Body</label>
-                                <textarea id="commMessage" rows="3" required placeholder="Type church message here..." class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
-                            </div>
-                            <div>
-                                <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-6 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-paper-plane"></i> Log & Dispatch Announcement
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div class="p-4 bg-slate-50 border-b font-bold text-slate-800 text-sm">Dispatched Communication History</div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-xs text-left">
-                                <thead class="bg-slate-100 text-slate-600 uppercase font-semibold border-b">
-                                    <tr>
-                                        <th class="p-3">Title</th>
-                                        <th class="p-3">Recipients</th>
-                                        <th class="p-3">Channel</th>
-                                        <th class="p-3">Message</th>
-                                        <th class="p-3 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="commTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: ADMIN & DATABASE MANAGEMENT -->
-                <section id="admin" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Admin Portal & Live Database Management</h2>
-                        <p class="text-xs text-slate-500">Secure backend access to manage local storage collections, perform JSON backup export/imports, or wipe data.</p>
-                    </div>
-
-                    <!-- Admin Auth Lock Box -->
-                    <div id="adminAuthBox" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md max-w-md mx-auto text-center space-y-4">
-                        <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-2xl">
-                            <i class="fa-solid fa-lock"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-slate-800">Administrator Credentials Required</h3>
-                            <p class="text-xs text-slate-500">Enter Admin Password to access database tools.</p>
-                            <p class="text-[11px] text-amber-600 mt-1 font-semibold">Default Password: <code class="bg-amber-50 px-1 py-0.5 border rounded">admin123</code></p>
-                        </div>
-                        <form id="adminAuthForm" class="space-y-3">
-                            <input type="password" id="adminPassInput" placeholder="Enter password" class="w-full p-3 border rounded-xl text-center text-sm focus:ring-2 focus:ring-amber-500 outline-none">
-                            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition text-sm">
-                                Unlock Admin Console
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Protected Admin Panel -->
-                    <div id="adminPanel" class="hidden space-y-6">
-                        <div class="flex justify-between items-center bg-emerald-900 text-white p-4 rounded-xl shadow">
-                            <div class="flex items-center gap-3">
-                                <i class="fa-solid fa-shield-halved text-2xl text-emerald-400"></i>
-                                <div>
-                                    <h3 class="font-bold text-sm">Admin Access Granted</h3>
-                                    <p class="text-xs text-emerald-200">Database Direct Read / Write Unlocked</p>
-                                </div>
-                            </div>
-                            <button onclick="lockAdminConsole()" class="bg-emerald-800 hover:bg-emerald-700 text-xs px-3 py-1.5 rounded-lg border border-emerald-600 font-semibold">
-                                Lock Console
-                            </button>
-                        </div>
-
-                        <!-- Data Backup / Restore -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
-                                <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                                    <i class="fa-solid fa-download text-blue-600"></i> Export JSON Data Backup
-                                </h4>
-                                <p class="text-xs text-slate-500">Download full local church database records into a single JSON file for safe offline keeping.</p>
-                                <button onclick="exportDatabaseJSON()" class="bg-blue-900 hover:bg-blue-800 text-white font-semibold text-xs px-4 py-2.5 rounded-lg transition shadow">
-                                    Download Database JSON Backup
-                                </button>
-                            </div>
-
-                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
-                                <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                                    <i class="fa-solid fa-upload text-amber-600"></i> Import JSON Data File
-                                </h4>
-                                <p class="text-xs text-slate-500">Restore or overwrite church database records from a backed-up JSON file.</p>
-                                <input type="file" id="jsonImportInput" accept=".json" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
-                            </div>
-                        </div>
-
-                        <!-- Reset / Wipe -->
-                        <div class="bg-rose-50 p-5 rounded-xl border border-rose-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div>
-                                <h4 class="font-bold text-rose-900 text-sm">System Database Reset Zone</h4>
-                                <p class="text-xs text-rose-700">Wipe all custom stored data and revert system back to initial sample records.</p>
-                            </div>
-                            <button onclick="confirmSystemReset()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg transition shadow shrink-0">
-                                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Reset Database To Factory Defaults
-                            </button>
-                        </div>
-
-                        <!-- Raw DB Tables Inspection -->
-                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                            <div class="p-4 bg-slate-50 border-b flex justify-between items-center">
-                                <h3 class="font-bold text-slate-800 text-sm">Live LocalStorage Database Inspector</h3>
-                                <button onclick="renderAdminRawInspector()" class="text-xs text-blue-600 font-semibold hover:underline">
-                                    Refresh Raw Data
-                                </button>
-                            </div>
-                            <div class="p-4">
-                                <pre id="rawDataInspector" class="bg-slate-900 text-emerald-400 p-4 rounded-xl text-xs overflow-x-auto max-h-96 font-mono"></pre>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- SECTION: SETTINGS -->
-                <section id="settings" class="page-section hidden space-y-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Church Profile & System Settings</h2>
-                        <p class="text-xs text-slate-500">Configure church metadata and regional settings.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                        <form id="settingsForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs font-medium">
-                            <div>
-                                <label class="block text-slate-600 mb-1">Church Name</label>
-                                <input type="text" id="setChurchName" value="Full Gospel Churches Of Kenya (Mamba)" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Town Location</label>
-                                <input type="text" id="setTown" value="Mamba Town" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Ward</label>
-                                <input type="text" id="setWard" value="Kithimani Ward" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">County</label>
-                                <input type="text" id="setCounty" value="Machakos County" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Country</label>
-                                <input type="text" id="setCountry" value="Kenya" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-slate-600 mb-1">Currency Code</label>
-                                <input type="text" id="setCurrency" value="KES" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
-                            </div>
-                            <div class="sm:col-span-2 lg:col-span-3">
-                                <button type="submit" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-6 rounded-lg shadow transition flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-floppy-disk"></i> Save Settings
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </section>
-
-                <!-- Footer -->
-                <footer class="bg-white border border-slate-200 rounded-xl p-4 text-center text-xs text-slate-500 space-y-1 shadow-sm mt-8">
-                    <div class="flex items-center justify-center gap-2 font-bold text-slate-800">
-                        <i class="fa-solid fa-church text-amber-500"></i> FULL GOSPEL CHURCHES OF KENYA (MAMBA)
-                    </div>
-                    <p>Mamba Town, Kithimani Ward, Machakos County, Kenya.</p>
-                    <p class="text-[10px] text-slate-400">Copyright &copy; 2026 FGCK Mamba Management System. All Rights Reserved.</p>
-                </footer>
-            </main>
-        </div>
+<body class="h-full bg-slate-100 text-slate-800 antialiased">
+<div id="ov" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" onclick="side(0)"></div>
+<aside id="side" class="fixed inset-y-0 left-0 z-40 w-64 bg-slate-900 text-white flex flex-col -translate-x-full md:translate-x-0 transition-transform duration-200 shadow-2xl">
+  <div class="p-4 flex items-center gap-3 bg-slate-950 border-b border-slate-800">
+    <div class="w-10 h-10 rounded-full bg-amber-500 text-slate-900 flex items-center justify-center text-lg"><i class="fa-solid fa-cross"></i></div>
+    <div><h1 class="font-bold tracking-wide text-sm text-amber-400">FGCK MAMBA</h1><p class="text-xs text-slate-400">Management System</p></div>
+  </div>
+  <div class="px-4 py-2 bg-slate-800/50 text-[11px] text-slate-300 truncate"><i class="fa-solid fa-location-dot text-amber-500"></i> <span data-loc></span></div>
+  <nav id="nav" class="flex-1 overflow-y-auto py-2 px-2 space-y-1 text-sm"></nav>
+  <div class="p-3 bg-slate-950 border-t border-slate-800 text-xs text-slate-400 flex items-center justify-between"><span>System v3.0</span><span id="badge" class="px-2 py-0.5 rounded text-[10px]"></span></div>
+</aside>
+<div class="md:ml-64 h-screen flex flex-col">
+  <header class="bg-white border-b px-4 py-3 flex items-center justify-between shadow-sm z-20">
+    <div class="flex items-center gap-3">
+      <button class="md:hidden text-slate-600 text-xl p-1" onclick="side(1)" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+      <div><h2 class="font-bold text-base leading-tight">Church Administration Portal</h2><p class="text-xs text-slate-500" data-church></p></div>
     </div>
-
-    <!-- PRINTABLE REPORT MODAL -->
-    <div id="printReportModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto" id="printModalContent">
-            <div class="flex justify-between items-start border-b pb-4">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-900">FULL GOSPEL CHURCHES OF KENYA (MAMBA)</h2>
-                    <p class="text-xs text-slate-500">Official Executive Summary Report</p>
-                </div>
-                <button onclick="closePrintModal()" class="text-slate-400 hover:text-slate-700 text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-4 text-xs text-slate-700">
-                <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border">
-                    <div>
-                        <span class="block font-semibold text-slate-500">Report Date:</span>
-                        <span id="rptDate" class="font-bold text-slate-800"></span>
-                    </div>
-                    <div>
-                        <span class="block font-semibold text-slate-500">Generated By:</span>
-                        <span class="font-bold text-slate-800">Admin Portal</span>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <h4 class="font-bold text-slate-800 border-b pb-1">Key Church Metrics</h4>
-                    <ul class="space-y-1">
-                        <li class="flex justify-between"><span class="text-slate-600">Total Registered Members:</span> <span id="rptMemberCount" class="font-bold"></span></li>
-                        <li class="flex justify-between"><span class="text-slate-600">Total Recorded Services:</span> <span id="rptAttCount" class="font-bold"></span></li>
-                        <li class="flex justify-between"><span class="text-slate-600">Total Financial Revenue:</span> <span id="rptIncomeTotal" class="font-bold"></span></li>
-                        <li class="flex justify-between"><span class="text-slate-600">Total Pledges Receivable:</span> <span id="rptPledgeTotal" class="font-bold"></span></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="flex justify-end gap-2 pt-4 border-t">
-                <button onclick="closePrintModal()" class="px-4 py-2 border rounded-lg text-xs font-semibold hover:bg-slate-50">Close</button>
-                <button onclick="window.print()" class="px-4 py-2 bg-blue-900 text-white rounded-lg text-xs font-semibold hover:bg-blue-800"><i class="fa-solid fa-print"></i> Print</button>
-            </div>
-        </div>
+    <div class="flex items-center gap-3 text-xs">
+      <div class="hidden sm:block text-right"><div id="today" class="font-semibold text-slate-700"></div><div class="text-slate-400">East Africa Time</div></div>
+      <button id="role" onclick="adm?lock():needAdmin(()=>{})" class="flex items-center gap-2 bg-slate-100 border px-3 py-1.5 rounded-full font-medium text-slate-700 hover:bg-slate-200"></button>
     </div>
-
-    <!-- CORE SYSTEM SCRIPT -->
-    <script>
-        // Global State & Persistent Keys
-        const STORAGE_KEY = 'fgck_mamba_db_v2';
-        let isAdminAuthenticated = false;
-
-        // Default Initial Data Seed
-        const defaultData = {
-            members: [
-                { id: '1', name: 'John Mutua', number: 'FGCK-MB-001', gender: 'Male', dob: '1985-05-12', phone: '0712345678', email: 'jmutua@gmail.com', department: 'Men Ministry', dateJoined: '2020-01-15', address: 'Mamba Town Center' },
-                { id: '2', name: 'Grace Nduku', number: 'FGCK-MB-002', gender: 'Female', dob: '1992-09-24', phone: '0723456789', email: 'gnduku@gmail.com', department: 'Worship Team', dateJoined: '2021-03-10', address: 'Kithimani Market' }
-            ],
-            attendance: [
-                { id: '1', date: '2026-11-01', service: 'Sunday Service', men: 320, women: 410, children: 112, visitors: 15, total: 857 }
-            ],
-            visitors: [
-                { id: '1', name: 'Peter Kamau', phone: '0733112233', date: '2026-11-01', followup: 'Elder Musyoka', comments: 'Visiting from Nairobi' }
-            ],
-            events: [
-                { id: '1', name: 'Annual Revival Conference', category: 'Conference', date: '2026-12-10', time: '09:00', venue: 'Main Sanctuary', desc: 'Guest speakers from Nairobi and Machakos.' }
-            ],
-            pastoral: [
-                { id: '1', name: 'Mary Wambua', type: 'Prayer Request', date: '2026-11-02', notes: 'Praying for family healing and peace.' }
-            ],
-            staff: [
-                { id: '1', name: 'Rev. Samuel Musyoka', phone: '0711000111', role: 'Senior Pastor', department: 'Pastoral Care' }
-            ],
-            finance: [
-                { id: '1', type: 'Income', category: 'Tithes', amount: 150000, method: 'M-Pesa', date: '2026-11-01', ref: 'QK789123' },
-                { id: '2', type: 'Income', category: 'Sunday Offering', amount: 45000, method: 'Cash', date: '2026-11-01', ref: 'CSH-001' }
-            ],
-            pledges: [
-                { id: '1', name: 'David Kioko', purpose: 'Sanctuary Expansion', pledged: 50000, paid: 20000, dueDate: '2026-12-31' }
-            ],
-            inventory: [
-                { id: '1', name: 'Yamaha Keyboard Synthesizer', category: 'Sound Equipment', date: '2022-04-10', value: 120000, condition: 'New / Excellent' }
-            ],
-            communications: [
-                { id: '1', title: 'Sunday Youth Meeting', recipients: 'Youth Ministry', channel: 'SMS Broadcast', message: 'Youth meeting this Saturday at 2 PM.' }
-            ],
-            settings: {
-                churchName: 'Full Gospel Churches Of Kenya (Mamba)',
-                town: 'Mamba Town',
-                ward: 'Kithimani Ward',
-                county: 'Machakos County',
-                country: 'Kenya',
-                currency: 'KES'
-            }
-        };
-
-        // Storage Handlers
-        function loadDB() {
-            try {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                if (!stored) {
-                    saveDB(defaultData);
-                    return defaultData;
-                }
-                return JSON.parse(stored);
-            } catch (e) {
-                console.error("Storage error, returning defaults:", e);
-                return defaultData;
-            }
-        }
-
-        function saveDB(data) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        }
-
-        // Initialize App State
-        let db = loadDB();
-
-        // Toast Helper
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            const bg = type === 'success' ? 'bg-emerald-800' : 'bg-rose-800';
-            toast.className = ` text-white px-4 py-3 rounded-xl shadow-xl border border-white/20 text-xs flex items-center justify-between gap-3 transform transition-all duration-300`;
-            toast.innerHTML = `<span><i class="fa-solid fa-circle-info mr-1"></i> </span><button onclick="this.parentElement.remove()" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>`;
-            container.appendChild(toast);
-            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 4000);
-        }
-
-        // Navigation Switcher
-        function switchSection(targetId) {
-            document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
-            const activeSec = document.getElementById(targetId);
-            if (activeSec) activeSec.classList.remove('hidden');
-
-            document.querySelectorAll('.sidebar-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#`) {
-                    link.classList.add('active');
-                }
-            });
-
-            // Close sidebar on mobile
-            document.getElementById('sidebar').classList.add('-translate-x-full');
-        }
-
-        // --- RENDERERS ---
-
-        function renderDashboard() {
-            // Stats
-            document.getElementById('statMembers').textContent = db.members.length;
-            
-            const lastAtt = db.attendance.length > 0 ? db.attendance[db.attendance.length - 1].total : 0;
-            document.getElementById('statAttendance').textContent = lastAtt;
-
-            const totalIncome = db.finance
-                .filter(f => f.type === 'Income')
-                .reduce((sum, f) => sum + parseFloat(f.amount || 0), 0);
-            document.getElementById('statIncome').textContent = totalIncome.toLocaleString();
-
-            // Dash Members snippet
-            const dashMTable = document.getElementById('dashMembersTable');
-            dashMTable.innerHTML = db.members.slice(-4).reverse().map(m => `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-2 font-medium text-slate-800"></td>
-                    <td class="p-2 text-slate-500"></td>
-                    <td class="p-2 text-slate-500"></td>
-                </tr>
-            `).join('') || '<tr><td colspan="3" class="p-2 text-center text-slate-400">No members recorded</td></tr>';
-
-            // Dash Finance snippet
-            const dashFTable = document.getElementById('dashFinanceTable');
-            dashFTable.innerHTML = db.finance.slice(-4).reverse().map(f => `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-2 font-medium text-slate-800"></td>
-                    <td class="p-2"><span class="px-2 py-0.5 rounded  'bg-rose-100 text-rose-700'"></span></td>
-                    <td class="p-2 font-bold"></td>
-                </tr>
-            `).join('') || '<tr><td colspan="3" class="p-2 text-center text-slate-400">No transactions recorded</td></tr>';
-        }
-
-        function renderMembers() {
-            const query = (document.getElementById('memberSearch').value || '').toLowerCase();
-            const tbody = document.getElementById('membersTableBody');
-            const filtered = db.members.filter(m => 
-                m.name.toLowerCase().includes(query) || 
-                (m.number && m.number.toLowerCase().includes(query)) ||
-                (m.phone && m.phone.includes(query))
-            );
-
-            document.getElementById('memberCountBadge').textContent = ` Total Members`;
-
-            tbody.innerHTML = filtered.map((m, idx) => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="p-3 text-slate-400 font-mono"></td>
-                    <td class="p-3 font-semibold text-slate-800"></td>
-                    <td class="p-3"></td>
-                    <td class="p-3 font-mono"></td>
-                    <td class="p-3"><span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-md border border-blue-100"></span></td>
-                    <td class="p-3"></td>
-                    <td class="p-3 text-center space-x-2">
-                        <button onclick="editMember('')" class="text-blue-600 hover:text-blue-800 font-medium"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                        <button onclick="deleteMember('')" class="text-rose-600 hover:text-rose-800 font-medium"><i class="fa-solid fa-trash"></i> Delete</button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="7" class="p-4 text-center text-slate-400">No members found</td></tr>';
-        }
-
-        function renderAttendance() {
-            const tbody = document.getElementById('attendanceTableBody');
-            tbody.innerHTML = db.attendance.map(a => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="p-3 font-medium"></td>
-                    <td class="p-3 font-semibold text-slate-800"></td>
-                    <td class="p-3"></td>
-                    <td class="p-3"></td>
-                    <td class="p-3"></td>
-                    <td class="p-3"></td>
-                    <td class="p-3 font-bold text-emerald-700"></td>
-                    <td class="p-3 text-center">
-                        <button onclick="deleteAttendance('')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="8" class="p-4 text-center text-slate-400">No attendance records logged</td></tr>';
-        }
-
-        function renderVisitors() {
-            const tbody = document.getElementById('visitorsTableBody');
-            tbody.innerHTML = db.visitors.map(v => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="p-3 font-semibold text-slate-800"></td>
-                    <td class="p-3 font-mono"></td>
-                    <td class="p-3"></td>
-                    <td class="p-3"></td>
-                    <td class="p-3 text-slate-500"></td>
-                    <td class="p-3 text-center">
-                        <button onclick="deleteVisitor('')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="6" class="p-4 text-center text-slate-400">No visitors recorded</td></tr>';
-        }
-
-        function renderDepartments() {
-            const depts = [
-                { name: 'Worship Team', icon: 'fa-music', color: 'text-purple-600 bg-purple-50' },
-                { name: 'Youth Ministry', icon: 'fa-child-reaching', color: 'text-blue-600 bg-blue-50' },
-                { name: 'Children Ministry', icon: 'fa-face-smile', color: 'text-emerald-600 bg-emerald-50' },
-                { name: 'Men Ministry', icon: 'fa-user-tie', color: 'text-indigo-600 bg-indigo-50' },
-                { name: 'Women Ministry', icon: 'fa-person-dress', color: 'text-rose-600 bg-rose-50' },
-                { name: 'Prayer Ministry', icon: 'fa-hands-praying', color: 'text-amber-600 bg-amber-50' },
-                { name: 'Media Ministry', icon: 'fa-video', color: 'text-teal-600 bg-teal-50' },
-                { name: 'Ushering', icon: 'fa-hand-shake', color: 'text-slate-600 bg-slate-100' }
-            ];
-
-            const grid = document.getElementById('deptsGrid');
-            grid.innerHTML = depts.map(d => {
-                const count = db.members.filter(m => m.department === d.name).length;
-                return `
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl  flex items-center justify-center text-xl shrink-0">
-                            <i class="fa-solid "></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-slate-800 text-sm"></h4>
-                            <p class="text-xs text-slate-500"> Registered Members</p>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderEvents() {
-            const tbody = document.getElementById('eventsTableBody');
-            tbody.innerHTML = db.events.map(e => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="p-3 font-semibold text-slate-800"></td>
-                    <td class="p-3"><span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded text-[11px] font-semibold"></span></td>
-                    <td class="p-3 font-mono">  ''</td>
-                    <td class="p-3"></td>
-                    <td class="p-3 text-slate-500"></td>
-                    <td class="p-3 text-center">
-                        <button onclick="deleteEvent('')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="6" class="p-4 text-center text-slate-400">No upcoming events scheduled</td></tr>';
-        }
-
-        function renderPastoral() {
-            const tbody = document.getElementById('pastoralTableBody');
-            tbody.innerHTML = db.pastoral.map(p => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="p-3 font-semibold text-slate-800"></td>
-                    <td class="p-3"><span class="bg-purple-50 text-purple-700 px-2 py-0.5 rounded text-[11px] font-semibold"></span></td>
-                    <td class="p-3 font-mono"></td>
-                    <td class="p-3 text-slate-500"></td>
-                    <td class="p-3 text-center">
-                        <button onclick="deletePastoral('')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="5" class="p-4 text-center text-slate-400">No pastoral logs recorded</td></tr>';
-        }
-
-        function renderStaff() {
-            const tbody = document.getElementById('staffTableBody');
-            tbody.innerHTML = db.staff.map(s => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="p-3 font-semibold text-slate-800"></td>
-                    <td class="p-3 font-medium text-blue-900"></td>
-                    <td class="p-3 text-slate-500"></td>
-                    <td class="p-3 font-mono"></td>
-                    <td class="p-3 text-center">
-                        <button onclick="deleteStaff('')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="5" class="p-4 text-center text-slate-400">No staff members listed</td></tr>';
-        }
-
-        function renderFinance() {
-            const tbody = document.getElementById('financeTableBody');
-            let totalIncome = 0;
-            let totalExpense = 0;
-
-            tbody.innerHTML = db.finance.map(f => {
-                const amt = parseFloat(f.amount || 0);
-                if (f.type === 'Income') totalIncome += amt;
-                else totalExpense += amt;
-
-                return `
-                    <tr class="hover:bg-slate-50 border-b">
-                        <td class="p-3 font-mono"></td>
-                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold  'bg-rose-100 text-rose-800'"></span></td>
-                        <td class="p-3 font-semibold text-slate-800"></td>
-                        <td class="p-3"></td>
-                        <td class="p-3 font-mono text-slate-500"></td>
-                        <td class="p-3 font-bold  'text-rose-700'">KES </td>
-                        <td class="p-3 text-center">
-                            <button onclick="deleteFinance('')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            }).join('') || '<tr><td colspan="7" class="p-4 text-center text-slate-400">No financial transactions logged</td></tr>';
-
-            const net = totalIncome - totalExpense;
-            document.getElementById('financialBalanceBadge').textContent = `Net Balance: KES `;
-        }
-
-        function renderPledges() {
-            const tbody = document.getElementById('pledgesTableBody');
-            tbody.innerHTML = db.pledges.map(p => {
-                const pledged = parseFloat(p.pledged || 0);
-                const paid = parseFloat(p.paid || 0);
-                const balance = pledged - paid;
-
-                return `
-                    <tr class="hover:bg-slate-50 border-b">
-                        <td class="p-3 font-semibold text-slate-800"></td>
-                        <td class="p-3"></td>
-                        <td class="p-3 font-mono">KES </td>
-                        <td class="p-3 font-mono text-emerald-700">KES </td>
-                        <td class="p-3 font-mono font-bold text-rose-700">KES </td>
-                        <td class="p-3 font-mono text-slate-500"></td>
-                        <td class="p-3 text-center">
-                            <button onclick="deletePledge('')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            }).join('') || '<tr><td colspan="7" class="p-4 text-center text-slate-400">No pledges tracked</td></tr>';
-        }
-
-        function renderInventory() {
-            const tbody = document.getElementById('inventoryTableBody');
-            tbody.innerHTML = db.inventory.map(i => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="p-3 font-semibold text-slate-800"></td>
-                    <td class="p-3 text-slate-500"></td>
-                    <td class="p-3 font-mono"></td>
-                    <td class="p-3 font-mono font-bold">KES </td>
-                    <td class="p-3"><span class="bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded text-[11px]"></span></td>
-                    <td class="p-3 text-center">
-                        <button onclick="deleteInventory('')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="6" class="p-4 text-center text-slate-400">No inventory assets logged</td></tr>';
-        }
-
-        function renderCommunications() {
-            const tbody = document.getElementById('commTableBody');
-            tbody.innerHTML = db.communications.map(c => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="p-3 font-semibold text-slate-800"></td>
-                    <td class="p-3"><span class="bg-sky-50 text-sky-700 px-2 py-0.5 rounded text-[11px]"></span></td>
-                    <td class="p-3 font-medium text-slate-600"></td>
-                    <td class="p-3 text-slate-500 max-w-xs truncate"></td>
-                    <td class="p-3 text-center">
-                        <button onclick="deleteCommunication('')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="5" class="p-4 text-center text-slate-400">No communications dispatched</td></tr>';
-        }
-
-        function renderReports() {
-            document.getElementById('reportMemberSummary').textContent = ` members currently registered.`;
-            document.getElementById('reportAttendanceSummary').textContent = ` services logged.`;
-            const totalInc = db.finance.filter(f => f.type === 'Income').reduce((sum, f) => sum + parseFloat(f.amount || 0), 0);
-            document.getElementById('reportFinanceSummary').textContent = `KES  revenue recorded.`;
-            const totalBal = db.pledges.reduce((sum, p) => sum + (parseFloat(p.pledged || 0) - parseFloat(p.paid || 0)), 0);
-            document.getElementById('reportPledgeSummary').textContent = `KES  uncollected balance.`;
-        }
-
-        function renderAll() {
-            renderDashboard();
-            renderMembers();
-            renderAttendance();
-            renderVisitors();
-            renderDepartments();
-            renderEvents();
-            renderPastoral();
-            renderStaff();
-            renderFinance();
-            renderPledges();
-            renderInventory();
-            renderCommunications();
-            renderReports();
-            if (isAdminAuthenticated) renderAdminRawInspector();
-        }
-
-        // --- FORM SUBMIT HANDLERS & ACTIONS ---
-
-        // MEMBER CRUD
-        document.getElementById('memberForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const editId = document.getElementById('memberEditId').value;
-            const newObj = {
-                id: editId || Date.now().toString(),
-                name: document.getElementById('mName').value,
-                number: document.getElementById('mNumber').value || `FGCK-MB-`,
-                gender: document.getElementById('mGender').value,
-                dob: document.getElementById('mDob').value,
-                phone: document.getElementById('mPhone').value,
-                email: document.getElementById('mEmail').value,
-                department: document.getElementById('mDept').value,
-                dateJoined: document.getElementById('mDateJoined').value,
-                address: document.getElementById('mAddress').value
-            };
-
-            if (editId) {
-                const idx = db.members.findIndex(m => m.id === editId);
-                if (idx !== -1) db.members[idx] = newObj;
-                showToast("Member record updated!");
-            } else {
-                db.members.push(newObj);
-                showToast("New member registered successfully!");
-            }
-
-            saveDB(db);
-            resetMemberForm();
-            renderAll();
-        });
-
-        function editMember(id) {
-            const m = db.members.find(x => x.id === id);
-            if (!m) return;
-            document.getElementById('memberEditId').value = m.id;
-            document.getElementById('mName').value = m.name;
-            document.getElementById('mNumber').value = m.number || '';
-            document.getElementById('mGender').value = m.gender;
-            document.getElementById('mDob').value = m.dob || '';
-            document.getElementById('mPhone').value = m.phone;
-            document.getElementById('mEmail').value = m.email || '';
-            document.getElementById('mDept').value = m.department;
-            document.getElementById('mDateJoined').value = m.dateJoined || '';
-            document.getElementById('mAddress').value = m.address || '';
-
-            document.getElementById('memberFormTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-amber-600 mr-2"></i> Edit Member Profile';
-            document.getElementById('saveMemberBtnText').textContent = 'Update Member';
-            document.getElementById('cancelEditMemberBtn').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function resetMemberForm() {
-            document.getElementById('memberForm').reset();
-            document.getElementById('memberEditId').value = '';
-            document.getElementById('memberFormTitle').innerHTML = '<i class="fa-solid fa-user-plus text-blue-600 mr-2"></i> Register New Member';
-            document.getElementById('saveMemberBtnText').textContent = 'Save Member';
-            document.getElementById('cancelEditMemberBtn').classList.add('hidden');
-        }
-
-        function deleteMember(id) {
-            db.members = db.members.filter(m => m.id !== id);
-            saveDB(db);
-            renderAll();
-            showToast("Member record deleted.", "error");
-        }
-
-        // ATTENDANCE CRUD
-        document.getElementById('attendanceForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const men = parseInt(document.getElementById('attMen').value) || 0;
-            const women = parseInt(document.getElementById('attWomen').value) || 0;
-            const children = parseInt(document.getElementById('attChildren').value) || 0;
-            const visitors = parseInt(document.getElementById('attVisitors').value) || 0;
-
-            const rec = {
-                id: Date.now().toString(),
-                service: document.getElementById('attService').value,
-                date: document.getElementById('attDate').value,
-                men, women, children, visitors,
-                total: men + women + children + visitors
-            };
-
-            db.attendance.push(rec);
-            saveDB(db);
-            this.reset();
-            renderAll();
-            showToast("Attendance record saved!");
-        });
-
-        function deleteAttendance(id) {
-            db.attendance = db.attendance.filter(a => a.id !== id);
-            saveDB(db);
-            renderAll();
-            showToast("Attendance entry removed.", "error");
-        }
-
-        // VISITORS CRUD
-        document.getElementById('visitorForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            db.visitors.push({
-                id: Date.now().toString(),
-                name: document.getElementById('vName').value,
-                phone: document.getElementById('vPhone').value,
-                date: document.getElementById('vDate').value,
-                followup: document.getElementById('vFollowup').value,
-                comments: document.getElementById('vComments').value
-            });
-            saveDB(db);
-            this.reset();
-            renderAll();
-            showToast("Visitor entry saved!");
-        });
-
-        function deleteVisitor(id) {
-            db.visitors = db.visitors.filter(v => v.id !== id);
-            saveDB(db);
-            renderAll();
-            showToast("Visitor entry deleted.", "error");
-        }
-
-        // EVENTS CRUD
-        document.getElementById('eventForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            db.events.push({
-                id: Date.now().toString(),
-                name: document.getElementById('evName').value,
-                category: document.getElementById('evCategory').value,
-                date: document.getElementById('evDate').value,
-                time: document.getElementById('evTime').value,
-                venue: document.getElementById('evVenue').value,
-                desc: document.getElementById('evDesc').value
-            });
-            saveDB(db);
-            this.reset();
-            renderAll();
-            showToast("Event published successfully!");
-        });
-
-        function deleteEvent(id) {
-            db.events = db.events.filter(e => e.id !== id);
-            saveDB(db);
-            renderAll();
-            showToast("Event cancelled.", "error");
-        }
-
-        // PASTORAL CRUD
-        document.getElementById('pastoralForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            db.pastoral.push({
-                id: Date.now().toString(),
-                name: document.getElementById('pastName').value,
-                type: document.getElementById('pastType').value,
-                date: document.getElementById('pastDate').value,
-                notes: document.getElementById('pastNotes').value
-            });
-            saveDB(db);
-            this.reset();
-            renderAll();
-            showToast("Pastoral log recorded!");
-        });
-
-        function deletePastoral(id) {
-            db.pastoral = db.pastoral.filter(p => p.id !== id);
-            saveDB(db);
-            renderAll();
-            showToast("Pastoral record deleted.", "error");
-        }
-
-        // STAFF CRUD
-        document.getElementById('staffForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            db.staff.push({
-                id: Date.now().toString(),
-                name: document.getElementById('stName').value,
-                phone: document.getElementById('stPhone').value,
-                role: document.getElementById('stRole').value,
-                department: document.getElementById('stDept').value
-            });
-            saveDB(db);
-            this.reset();
-            renderAll();
-            showToast("Staff member saved!");
-        });
-
-        function deleteStaff(id) {
-            db.staff = db.staff.filter(s => s.id !== id);
-            saveDB(db);
-            renderAll();
-            showToast("Staff record removed.", "error");
-        }
-
-        // FINANCE CRUD
-        document.getElementById('financeForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            db.finance.push({
-                id: Date.now().toString(),
-                type: document.getElementById('finType').value,
-                category: document.getElementById('finCategory').value,
-                amount: parseFloat(document.getElementById('finAmount').value),
-                method: document.getElementById('finMethod').value,
-                date: document.getElementById('finDate').value,
-                ref: document.getElementById('finRef').value
-            });
-            saveDB(db);
-            this.reset();
-            renderAll();
-            showToast("Transaction logged!");
-        });
-
-        function deleteFinance(id) {
-            db.finance = db.finance.filter(f => f.id !== id);
-            saveDB(db);
-            renderAll();
-            showToast("Transaction deleted.", "error");
-        }
-
-        // PLEDGES CRUD
-        document.getElementById('pledgeForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            db.pledges.push({
-                id: Date.now().toString(),
-                name: document.getElementById('plName').value,
-                purpose: document.getElementById('plPurpose').value,
-                pledged: parseFloat(document.getElementById('plPledged').value),
-                paid: parseFloat(document.getElementById('plPaid').value || 0),
-                dueDate: document.getElementById('plDueDate').value
-            });
-            saveDB(db);
-            this.reset();
-            renderAll();
-            showToast("Pledge record saved!");
-        });
-
-        function deletePledge(id) {
-            db.pledges = db.pledges.filter(p => p.id !== id);
-            saveDB(db);
-            renderAll();
-            showToast("Pledge deleted.", "error");
-        }
-
-        // INVENTORY CRUD
-        document.getElementById('inventoryForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            db.inventory.push({
-                id: Date.now().toString(),
-                name: document.getElementById('invName').value,
-                category: document.getElementById('invCategory').value,
-                date: document.getElementById('invDate').value,
-                value: parseFloat(document.getElementById('invValue').value || 0),
-                condition: document.getElementById('invCondition').value
-            });
-            saveDB(db);
-            this.reset();
-            renderAll();
-            showToast("Asset logged to inventory!");
-        });
-
-        function deleteInventory(id) {
-            db.inventory = db.inventory.filter(i => i.id !== id);
-            saveDB(db);
-            renderAll();
-            showToast("Asset entry removed.", "error");
-        }
-
-        // COMMUNICATIONS CRUD
-        document.getElementById('commForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            db.communications.push({
-                id: Date.now().toString(),
-                title: document.getElementById('commTitle').value,
-                recipients: document.getElementById('commRecipients').value,
-                channel: document.getElementById('commChannel').value,
-                message: document.getElementById('commMessage').value
-            });
-            saveDB(db);
-            this.reset();
-            renderAll();
-            showToast("Announcement logged & dispatched!");
-        });
-
-        function deleteCommunication(id) {
-            db.communications = db.communications.filter(c => c.id !== id);
-            saveDB(db);
-            renderAll();
-            showToast("Communication log deleted.", "error");
-        }
-
-        // SETTINGS FORM
-        document.getElementById('settingsForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            db.settings = {
-                churchName: document.getElementById('setChurchName').value,
-                town: document.getElementById('setTown').value,
-                ward: document.getElementById('setWard').value,
-                county: document.getElementById('setCounty').value,
-                country: document.getElementById('setCountry').value,
-                currency: document.getElementById('setCurrency').value
-            };
-            saveDB(db);
-            showToast("Church settings updated!");
-        });
-
-        // --- ADMIN DATABASE PORTAL & BACKUP ---
-
-        document.getElementById('adminAuthForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const pass = document.getElementById('adminPassInput').value;
-            if (pass === 'admin123') {
-                isAdminAuthenticated = true;
-                document.getElementById('adminAuthBox').classList.add('hidden');
-                document.getElementById('adminPanel').classList.remove('hidden');
-                document.getElementById('authBadge').textContent = 'Admin Mode';
-                document.getElementById('authBadge').className = 'bg-amber-500 text-slate-900 border border-amber-400 font-bold px-2 py-0.5 rounded text-[10px]';
-                renderAdminRawInspector();
-                showToast("Admin access unlocked!");
-            } else {
-                showToast("Invalid admin password", "error");
-            }
-        });
-
-        function lockAdminConsole() {
-            isAdminAuthenticated = false;
-            document.getElementById('adminPassInput').value = '';
-            document.getElementById('adminAuthBox').classList.remove('hidden');
-            document.getElementById('adminPanel').classList.add('hidden');
-            document.getElementById('authBadge').textContent = 'Ready';
-            document.getElementById('authBadge').className = 'bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded text-[10px]';
-        }
-
-        function renderAdminRawInspector() {
-            document.getElementById('rawDataInspector').textContent = JSON.stringify(db, null, 2);
-        }
-
-        function exportDatabaseJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `FGCK_Mamba_DB_Backup_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-            showToast("Database JSON backup downloaded!");
-        }
-
-        document.getElementById('jsonImportInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                try {
-                    const importedData = JSON.parse(evt.target.result);
-                    if (importedData && typeof importedData === 'object') {
-                        db = importedData;
-                        saveDB(db);
-                        renderAll();
-                        showToast("Database successfully restored from JSON file!");
-                    } else {
-                        showToast("Invalid JSON file format", "error");
-                    }
-                } catch (err) {
-                    showToast("Error parsing JSON file", "error");
-                }
-            };
-            reader.readAsText(file);
-        });
-
-        function confirmSystemReset() {
-            if (confirm("Are you sure you want to reset the database? All custom member records, financial transactions, and settings will revert to default.")) {
-                db = JSON.parse(JSON.stringify(defaultData));
-                saveDB(db);
-                renderAll();
-                showToast("Database reset to factory default state.", "error");
-            }
-        }
-
-        // --- PRINTABLE REPORT ---
-
-        function printSummaryReport() {
-            document.getElementById('rptDate').textContent = new Date().toLocaleDateString('en-KE', { dateStyle: 'full' });
-            document.getElementById('rptMemberCount').textContent = `${db.members.length} Members`;
-            document.getElementById('rptAttCount').textContent = `${db.attendance.length} Logged Services`;
-
-            const totalInc = db.finance.filter(f => f.type === 'Income').reduce((sum, f) => sum + parseFloat(f.amount || 0), 0);
-            document.getElementById('rptIncomeTotal').textContent = `KES ${totalInc.toLocaleString()}`;
-
-            const totalBal = db.pledges.reduce((sum, p) => sum + (parseFloat(p.pledged || 0) - parseFloat(p.paid || 0)), 0);
-            document.getElementById('rptPledgeTotal').textContent = `KES ${totalBal.toLocaleString()}`;
-
-            document.getElementById('printReportModal').classList.remove('hidden');
-        }
-
-        function closePrintModal() {
-            document.getElementById('printReportModal').classList.add('hidden');
-        }
-
-        // --- INITIALIZATION ---
-
-        window.onload = function() {
-            // Display Current Date
-            document.getElementById("currentDate").textContent = new Intl.DateTimeFormat("en-KE", {
-                dateStyle: "medium",
-                timeZone: "Africa/Nairobi"
-            }).format(new Date());
-
-            // Initialize Form Dates default to today
-            const todayStr = new Date().toISOString().split('T')[0];
-            ['mDateJoined', 'attDate', 'vDate', 'evDate', 'pastDate', 'finDate', 'plDueDate', 'invDate'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = todayStr;
-            });
-
-            // Toggle Sidebar Mobile
-            document.getElementById('menuToggle').addEventListener('click', function() {
-                document.getElementById('sidebar').classList.toggle('-translate-x-full');
-            });
-
-            // Route Anchor Links
-            window.addEventListener('hashchange', function() {
-                const hash = window.location.hash.replace('#', '') || 'dashboard';
-                switchSection(hash);
-            });
-
-            // Initial view
-            const initHash = window.location.hash.replace('#', '') || 'dashboard';
-            switchSection(initHash);
-
-            // Render all dynamic tables
-            renderAll();
-        };
-    </script>
+  </header>
+  <main id="main" class="flex-1 overflow-y-auto p-4 md:p-6"></main>
+</div>
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60"></div>
+<div id="toasts" class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2 max-w-xs"></div>
+
+<script>
+const KEY='fgck_mamba_db_v3',OLD='fgck_mamba_db_v2',PWK='fgck_mamba_admin_pw';
+const $=id=>document.getElementById(id),$$=s=>document.querySelectorAll(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const money=n=>(db.settings.currency||'KES')+' '+(Number(n)||0).toLocaleString('en-KE');
+const fd=d=>d?new Date(d+'T00:00').toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'}):'—';
+const sum=(a,f)=>a.reduce((s,x)=>s+(Number(f(x))||0),0);
+const tot=a=>(a.men||0)+(a.women||0)+(a.children||0)+(a.visitors||0);
+const badge=(t,c)=>`<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-${c}-100 text-${c}-700">${esc(t)}</span>`;
+const F=(k,l,t='text',r=0,o=null,d=0)=>({k,l,t,r,o,d});
+const DEPTS=['Worship Team','Youth Ministry','Children Ministry','Men Ministry','Women Ministry','Prayer Ministry','Media Ministry','Ushering'];
+
+const M={
+members:{l:'Members',n:'Member',t:'Member Management',s:'Register, search, update and manage member profiles.',a:'Add Member',
+ f:[F('name','Full Name','text',1),F('number','Membership No. (auto if blank)'),F('gender','Gender','select',1,['Male','Female']),F('dob','Date of Birth','date'),F('phone','Phone Number','tel',1),F('email','Email','email'),F('department','Department','select',0,[...DEPTS,'General Member']),F('dateJoined','Date Joined','date',0,null,1),F('address','Residential Address')],
+ c:['number','name','gender','phone','department','address']},
+attendance:{l:'Attendance',n:'Attendance Record',t:'Attendance Management',s:'Record and track headcount across services.',a:'Record Attendance',sort:['date',-1],
+ f:[F('service','Service Type','select',1,['Sunday Service','Midweek Service','Prayer Meeting','Youth Fellowship','Special Crusade']),F('date','Date','date',1,null,1),F('men','Men','number'),F('women','Women','number'),F('children','Children','number'),F('visitors','Visitors','number')],
+ c:['date','service','men','women','children','visitors','total'],v:{total:['Total',r=>`<b class="text-emerald-700">${tot(r)}</b>`]}},
+visitors:{l:'Visitors',n:'Visitor',t:'Visitor Management',s:'Track and follow up with first-time guests.',a:'Add Visitor',sort:['date',-1],
+ f:[F('name','Visitor Name','text',1),F('phone','Phone Number','tel',1),F('date','Date of Visit','date',1,null,1),F('followup','Follow-up Person'),F('comments','Comments / Prayer Requests','area')],
+ c:['name','phone','date','followup','comments']},
+events:{l:'Events',n:'Event',t:'Church Events',s:'Plan and publish the church calendar.',a:'Create Event',sort:['date',1],
+ f:[F('name','Event Name','text',1),F('category','Category','select',0,['Worship','Conference','Crusade','Prayer Meeting','Seminar']),F('date','Event Date','date',1,null,1),F('time','Event Time','time'),F('venue','Venue'),F('desc','Description','area')],
+ c:['name','category','date','time','venue','desc']},
+pastoral:{l:'Pastoral Care',n:'Pastoral Record',t:'Pastoral Care & Visitation',s:'Prayer requests, counselling and visitation logs.',a:'Log Pastoral Record',sort:['date',-1],
+ f:[F('name','Member / Individual Name','text',1),F('type','Care Type','select',0,['Prayer Request','Counselling Session','Home Visitation','Hospital Visitation','Pastoral Appointment']),F('date','Date','date',1,null,1),F('notes','Notes / Action Details','area')],
+ c:['name','type','date','notes']},
+staff:{l:'Staff & Volunteers',n:'Staff Member',t:'Staff & Volunteers',s:'Church leadership, ministers, staff and ministry heads.',a:'Add Staff Member',
+ f:[F('name','Full Name','text',1),F('phone','Phone Number','tel',1),F('role','Position / Role','text',1),F('department','Department')],
+ c:['name','role','department','phone']},
+finance:{l:'Finance',n:'Transaction',t:'Financial Management',s:'Tithes, offerings, donations, building fund and expenses.',a:'Record Transaction',sort:['date',-1],
+ f:[F('type','Transaction Type','select',1,['Income','Expense']),F('category','Category','select',1,['Tithes','Sunday Offering','Thanksgiving','Building Fund','Missions & Outreach','Salaries & Allowances','Utilities & Maintenance','Equipment & Sound']),F('amount','Amount','money',1),F('method','Payment Method','select',0,['Cash','M-Pesa','Bank Transfer','Cheque']),F('date','Transaction Date','date',1,null,1),F('ref','Reference No. (M-Pesa / Receipt)')],
+ c:['date','type','category','method','ref','amount'],
+ x:{type:v=>badge(v,v==='Income'?'emerald':'rose'),amount:(v,r)=>`<b class="${r.type==='Income'?'text-emerald-700':'text-rose-700'}">${money(v)}</b>`},
+ sm:rs=>{const i=sum(rs.filter(r=>r.type==='Income'),r=>r.amount),e=sum(rs.filter(r=>r.type!=='Income'),r=>r.amount);return `Income ${money(i)} · Expenses ${money(e)} · Net ${money(i-e)}`}},
+pledges:{l:'Pledges',n:'Pledge',t:'Pledges & Donations',s:'Track development pledges and balances.',a:'Add Pledge',sort:['dueDate',1],
+ f:[F('name','Donor Name','text',1),F('purpose','Purpose / Project','text',1),F('pledged','Pledged Amount','money',1),F('paid','Amount Paid','money'),F('dueDate','Target Due Date','date')],
+ c:['name','purpose','pledged','paid','balance','status','dueDate'],
+ v:{balance:['Balance',r=>`<b class="text-rose-700">${money(r.pledged-r.paid)}</b>`],status:['Status',r=>r.paid>=r.pledged?badge('Fulfilled','emerald'):r.paid>0?badge('Partial','amber'):badge('Pending','rose')]},
+ sm:rs=>`Pledged ${money(sum(rs,r=>r.pledged))} · Paid ${money(sum(rs,r=>r.paid))} · Balance ${money(sum(rs,r=>r.pledged-r.paid))}`},
+inventory:{l:'Inventory',n:'Asset',t:'Inventory & Assets',s:'Church equipment, instruments and valuations.',a:'Add Asset',
+ f:[F('name','Asset / Equipment Name','text',1),F('category','Category'),F('date','Purchase Date','date'),F('value','Estimated Value','money'),F('condition','Condition','select',0,['New / Excellent','Good','Needs Repair','Faulty / Scrap'])],
+ c:['name','category','date','value','condition'],sm:rs=>`Total value ${money(sum(rs,r=>r.value))}`},
+communications:{l:'Communications',n:'Announcement',t:'Church Communications',s:'Log SMS, email and WhatsApp notices.',a:'Log Announcement',
+ f:[F('title','Announcement Title','text',1),F('recipients','Target Group','select',0,['All Members','Youth Ministry','Men Ministry','Women Ministry','Church Leadership']),F('channel','Channel','select',0,['SMS Broadcast','Email Notice','WhatsApp Group']),F('message','Message','area',1)],
+ c:['title','recipients','channel','message']}
+};
+const NAV=[['dashboard','Dashboard','fa-chart-line'],['members','Members','fa-users'],['attendance','Attendance','fa-clipboard-user'],['visitors','Visitors','fa-user-plus'],['departments','Departments','fa-sitemap'],['events','Church Events','fa-calendar-days'],['pastoral','Pastoral Care','fa-hands-holding-child'],['staff','Staff & Volunteers','fa-user-tie'],['finance','Financial Mgt','fa-hand-holding-dollar'],['pledges','Pledges & Donations','fa-piggy-bank'],['inventory','Inventory','fa-boxes-stacked'],['reports','Reports','fa-file-invoice-dollar'],['communications','Communications','fa-bullhorn'],['admin','Admin & DB','fa-database'],['settings','Settings','fa-sliders']];
+const SETF=[['churchName','Church Name'],['town','Town'],['ward','Ward'],['county','County'],['country','Country'],['currency','Currency Code']];
+
+const DEF={
+members:[{id:'1',name:'John Mutua',number:'FGCK-MB-001',gender:'Male',dob:'1985-05-12',phone:'0712345678',email:'jmutua@gmail.com',department:'Men Ministry',dateJoined:'2020-01-15',address:'Mamba Town Center'},{id:'2',name:'Grace Nduku',number:'FGCK-MB-002',gender:'Female',dob:'1992-09-24',phone:'0723456789',email:'gnduku@gmail.com',department:'Worship Team',dateJoined:'2021-03-10',address:'Kithimani Market'}],
+attendance:[{id:'1',date:'2026-11-01',service:'Sunday Service',men:320,women:410,children:112,visitors:15}],
+visitors:[{id:'1',name:'Peter Kamau',phone:'0733112233',date:'2026-11-01',followup:'Elder Musyoka',comments:'Visiting from Nairobi'}],
+events:[{id:'1',name:'Annual Revival Conference',category:'Conference',date:'2026-12-10',time:'09:00',venue:'Main Sanctuary',desc:'Guest speakers from Nairobi and Machakos.'}],
+pastoral:[{id:'1',name:'Mary Wambua',type:'Prayer Request',date:'2026-11-02',notes:'Praying for family healing and peace.'}],
+staff:[{id:'1',name:'Rev. Samuel Musyoka',phone:'0711000111',role:'Senior Pastor',department:'Pastoral Care'}],
+finance:[{id:'1',type:'Income',category:'Tithes',amount:150000,method:'M-Pesa',date:'2026-11-01',ref:'QK789123'},{id:'2',type:'Income',category:'Sunday Offering',amount:45000,method:'Cash',date:'2026-11-01',ref:'CSH-001'}],
+pledges:[{id:'1',name:'David Kioko',purpose:'Sanctuary Expansion',pledged:50000,paid:20000,dueDate:'2026-12-31'}],
+inventory:[{id:'1',name:'Yamaha Keyboard Synthesizer',category:'Sound Equipment',date:'2022-04-10',value:120000,condition:'New / Excellent'}],
+communications:[{id:'1',title:'Sunday Youth Meeting',recipients:'Youth Ministry',channel:'SMS Broadcast',message:'Youth meeting this Saturday at 2 PM.'}],
+settings:{churchName:'Full Gospel Churches Of Kenya (Mamba)',town:'Mamba Town',ward:'Kithimani Ward',county:'Machakos County',country:'Kenya',currency:'KES'}};
+
+function norm(d){const o={settings:{...DEF.settings,...(d.settings||{})}};Object.keys(M).forEach(k=>{o[k]=(Array.isArray(d[k])?d[k]:[]).filter(x=>x&&typeof x==='object').map(x=>({...x,id:String(x.id||uid()).replace(/[^\w-]/g,'')||uid()}))});return o}
+function loadDB(){try{const s=localStorage.getItem(KEY)||localStorage.getItem(OLD);if(s)return norm(JSON.parse(s))}catch(e){console.error(e)}return norm(JSON.parse(JSON.stringify(DEF)))}
+let db=loadDB(),adm=false,adminTab='members',aqv='',lt;
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('Could not save: browser storage is full or blocked. Export a backup now.','err')}}
+const pw=()=>localStorage.getItem(PWK)||'admin123';
+
+/* ---------- UI helpers ---------- */
+function toast(m,t){const d=document.createElement('div');d.className=`text-white px-4 py-3 rounded-xl shadow-xl text-xs flex items-center gap-2 ${t==='err'?'bg-rose-700':'bg-emerald-700'}`;d.setAttribute('role','status');d.innerHTML=`<i class="fa-solid ${t==='err'?'fa-circle-exclamation':'fa-circle-check'}"></i><span>${esc(m)}</span>`;$('toasts').appendChild(d);setTimeout(()=>d.remove(),3800)}
+function modal(t,b,w){const m=$('modal');m.innerHTML=`<div id="pr" class="bg-white rounded-2xl w-full ${w?'max-w-2xl':'max-w-xl'} max-h-[90vh] overflow-y-auto shadow-2xl" role="dialog" aria-modal="true"><div class="flex justify-between items-center p-4 border-b sticky top-0 bg-white rounded-t-2xl"><h3 class="font-bold text-slate-800">${t}</h3><button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 text-lg" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div><div class="p-4">${b}</div></div>`;m.classList.remove('hidden');m.classList.add('flex');const i=m.querySelector('input,select,textarea');if(i)i.focus()}
+function closeModal(){const m=$('modal');m.classList.add('hidden');m.classList.remove('flex');m.innerHTML=''}
+function confirmBox(msg,fn){window._cf=fn;modal('Please confirm',`<p class="text-sm text-slate-600">${esc(msg)}</p><div class="flex justify-end gap-2 mt-5"><button class="btn border" onclick="closeModal()">Cancel</button><button class="btn bg-rose-600 text-white" onclick="closeModal();_cf()">Confirm</button></div>`)}
+function side(on){$('side').classList.toggle('-translate-x-full',!on);$('ov').classList.toggle('hidden',!on)}
+function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+
+/* ---------- Admin access ---------- */
+function needAdmin(fn){if(adm)return fn();window._ad=fn;modal('Administrator authorization',`<form onsubmit="unlock(event)" class="space-y-3"><p class="text-xs text-slate-500">Enter the admin password to continue. Deleting records and the Admin & DB console need this.</p><input type="password" id="apw" class="inp" placeholder="Password" required autocomplete="current-password"><div class="flex justify-end gap-2"><button type="button" class="btn border" onclick="closeModal()">Cancel</button><button class="btn bg-slate-900 text-white">Unlock</button></div></form>`)}
+function unlock(e){e.preventDefault();if($('apw').value!==pw())return toast('Incorrect password','err');adm=true;closeModal();clearTimeout(lt);lt=setTimeout(lock,9e5);adminUI();renderAdmin();toast('Admin mode enabled (locks after 15 minutes)');const f=window._ad;window._ad=null;if(f)f()}
+function lock(){adm=false;clearTimeout(lt);adminUI();renderAdmin();toast('Admin mode locked')}
+function adminUI(){$('badge').textContent=adm?'Admin Mode':'Standard';$('badge').className='px-2 py-0.5 rounded text-[10px] font-bold '+(adm?'bg-amber-500 text-slate-900':'bg-slate-800 text-slate-300');$('role').innerHTML=`<i class="fa-solid ${adm?'fa-lock-open text-amber-600':'fa-lock text-slate-500'}"></i><span class="hidden sm:inline">${adm?'Administrator':'Staff access'}</span>`}
+
+/* ---------- Generic table + form engine ---------- */
+function lab(m,c){const f=m.f.find(x=>x.k===c);return f?f.l.replace(/ \(.*\)/,''):m.v[c][0]}
+function cell(m,k,r){if(m.v&&m.v[k])return m.v[k][1](r);const f=m.f.find(x=>x.k===k),v=r[k];if(m.x&&m.x[k])return m.x[k](v,r);
+ if(f.t==='money')return money(v);if(f.t==='date')return fd(v);if(f.t==='select')return v?badge(v,'blue'):'—';
+ if(f.t==='area')return `<span class="block max-w-xs truncate" title="${esc(v)}">${esc(v)||'—'}</span>`;return esc(v)||'—'}
+function srt(k){const s=M[k].sort,a=[...db[k]];if(s)a.sort((x,y)=>((x[s[0]]||'')>(y[s[0]]||'')?1:(x[s[0]]||'')<(y[s[0]]||'')?-1:0)*s[1]);return a}
+const flt=(k,q)=>srt(k).filter(r=>!q||Object.values(r).join(' ').toLowerCase().includes(q.toLowerCase()));
+function table(k,rows){const m=M[k];return `<div class="overflow-x-auto"><table class="w-full text-xs text-left"><thead class="bg-slate-100 text-slate-600 font-semibold"><tr>${m.c.map(c=>`<th class="p-3 whitespace-nowrap">${lab(m,c)}</th>`).join('')}<th class="p-3 text-center">Actions</th></tr></thead><tbody class="divide-y divide-slate-100">${rows.map(r=>`<tr class="hover:bg-slate-50">${m.c.map(c=>`<td class="p-3 align-top">${cell(m,c,r)}</td>`).join('')}<td class="p-3 text-center whitespace-nowrap"><button class="text-blue-600 hover:text-blue-800 font-medium mr-3" onclick="openForm('${k}','${r.id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button><button class="text-rose-600 hover:text-rose-800 font-medium" onclick="del('${k}','${r.id}')"><i class="fa-solid fa-trash"></i> Delete</button></td></tr>`).join('')||`<tr><td colspan="${m.c.length+1}" class="p-8 text-center text-slate-400">No records found. Use the Add button to create one.</td></tr>`}</tbody></table></div>`}
+function renderModule(k){const q=$('q-'+k)?$('q-'+k).value:'',rows=flt(k,q),m=M[k];$('n-'+k).textContent=`${rows.length} of ${db[k].length} records${m.sm?' · '+m.sm(rows):''}`;$('t-'+k).innerHTML=table(k,rows)}
+function openForm(k,id){const m=M[k],r=id?db[k].find(x=>x.id===id):{};if(id&&!r)return;
+ const fld=f=>{const v=r[f.k]??(f.d?today():(f.t==='number'||f.t==='money'?0:'')),b=`name="${f.k}" ${f.r?'required':''} class="inp"`;let i;
+  if(f.t==='select'){const o=f.o.includes(v)||!v?f.o:[...f.o,v];i=`<select ${b}>${o.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('')}</select>`}
+  else if(f.t==='area')i=`<textarea ${b} rows="3">${esc(v)}</textarea>`;
+  else i=`<input ${b} type="${f.t==='money'?'number':f.t}" value="${esc(v)}" ${f.t==='money'?'min="0" step="0.01"':f.t==='number'?'min="0" step="1"':f.t==='tel'?'pattern="\\+?[0-9 ]{9,15}" title="Enter a valid phone number, e.g. 0712345678"':''}>`;
+  return `<div class="${f.t==='area'?'sm:col-span-2':''}"><label class="block text-xs font-semibold text-slate-600 mb-1">${f.l}${f.r?' *':''}</label>${i}</div>`};
+ modal(`${id?'Edit':'Add'} ${m.n}`,`<form onsubmit="save(event,'${k}','${id||''}')" class="grid sm:grid-cols-2 gap-3">${m.f.map(fld).join('')}<div class="sm:col-span-2 flex justify-end gap-2 pt-3 border-t"><button type="button" class="btn border" onclick="closeModal()">Cancel</button><button class="btn bg-blue-900 text-white"><i class="fa-solid fa-floppy-disk"></i> ${id?'Save changes':'Save'}</button></div></form>`)}
+function save(e,k,id){e.preventDefault();const m=M[k],d=new FormData(e.target),o={};
+ m.f.forEach(f=>{const v=d.get(f.k)??'';o[f.k]=f.t==='number'||f.t==='money'?Math.max(0,Number(v)||0):String(v).trim()});
+ if(k==='members'){if(!o.number)o.number='FGCK-MB-'+String(1+Math.max(0,...db.members.map(x=>parseInt(String(x.number||'').split('-').pop())||0))).padStart(3,'0');
+  if(db.members.some(x=>x.number===o.number&&x.id!==id))return toast('That membership number is already in use','err')}
+ if(k==='pledges'&&o.paid>o.pledged)return toast('Amount paid cannot be more than the pledged amount','err');
+ if(id){const i=db[k].findIndex(x=>x.id===id);db[k][i]={...db[k][i],...o}}else db[k].push({id:uid(),...o});
+ persist();closeModal();renderAll();toast(id?`${m.n} updated`:`${m.n} saved`)}
+function del(k,id){needAdmin(()=>confirmBox('Delete this record permanently? This cannot be undone.',()=>{db[k]=db[k].filter(x=>x.id!==id);persist();renderAll();toast('Record deleted')}))}
+function csv(k){const m=M[k],q=v=>{v=String(v??'');if(/^[=+\-@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};dl(`FGCK_${k}_${today()}.csv`,'\ufeff'+[m.f.map(f=>q(f.l)),...srt(k).map(r=>m.f.map(f=>q(r[f.k])))].map(a=>a.join(',')).join('\r\n'),'text/csv')}
+
+/* ---------- Page renderers ---------- */
+function st(){const inc=sum(db.finance.filter(f=>f.type==='Income'),f=>f.amount),exp=sum(db.finance.filter(f=>f.type!=='Income'),f=>f.amount),pl=sum(db.pledges,p=>p.pledged),pd=sum(db.pledges,p=>p.paid),n=db.attendance.length;return{inc,exp,pl,pd,n,avg:n?Math.round(sum(db.attendance,tot)/n):0}}
+function renderDashboard(){const s=st(),a=srt('attendance')[0];
+ const card=(l,v,sub,ic,c)=>`<div class="bg-white p-5 rounded-xl border shadow-sm flex items-center justify-between gap-3"><div class="min-w-0"><p class="text-xs font-medium text-slate-500">${l}</p><h3 class="text-2xl font-bold mt-1 truncate">${v}</h3><p class="text-xs text-${c}-600 mt-1 truncate">${sub}</p></div><div class="w-12 h-12 shrink-0 rounded-xl bg-${c}-50 text-${c}-600 flex items-center justify-center text-xl"><i class="fa-solid ${ic}"></i></div></div>`;
+ $('stats').innerHTML=card('Total members',db.members.length,'Active register','fa-users','blue')+card('Latest service attendance',a?tot(a):0,a?esc(a.service)+' · '+fd(a.date):'No record yet','fa-clipboard-user','emerald')+card('Total income',money(s.inc),'Net balance '+money(s.inc-s.exp),'fa-money-bill-wave','amber')+card('Pledges outstanding',money(s.pl-s.pd),db.pledges.length+' pledges tracked','fa-piggy-bank','indigo');
+ $('dm').innerHTML=[...db.members].reverse().slice(0,5).map(m=>`<tr><td class="p-2 font-medium">${esc(m.name)}</td><td class="p-2 text-slate-500">${esc(m.phone)}</td><td class="p-2 text-slate-500">${esc(m.department)}</td></tr>`).join('')||'<tr><td colspan="3" class="p-4 text-center text-slate-400">No members yet</td></tr>';
+ $('df').innerHTML=srt('finance').slice(0,5).map(f=>`<tr><td class="p-2 font-medium">${esc(f.category)}</td><td class="p-2">${badge(f.type,f.type==='Income'?'emerald':'rose')}</td><td class="p-2 font-bold">${money(f.amount)}</td></tr>`).join('')||'<tr><td colspan="3" class="p-4 text-center text-slate-400">No transactions yet</td></tr>'}
+function quick(k){go(k);openForm(k)}
+function renderDepts(){const I={'Worship Team':['fa-music','purple'],'Youth Ministry':['fa-child-reaching','blue'],'Children Ministry':['fa-face-smile','emerald'],'Men Ministry':['fa-user-tie','indigo'],'Women Ministry':['fa-person-dress','rose'],'Prayer Ministry':['fa-hands-praying','amber'],'Media Ministry':['fa-video','teal'],'Ushering':['fa-handshake','slate']};
+ $('deptsGrid').innerHTML=DEPTS.map(d=>{const n=db.members.filter(m=>m.department===d).length,[ic,c]=I[d];return `<button onclick="deptFilter('${d}')" class="bg-white p-5 rounded-xl border shadow-sm flex items-center gap-4 text-left hover:border-amber-500 hover:shadow-md transition"><div class="w-12 h-12 rounded-xl bg-${c}-50 text-${c}-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid ${ic}"></i></div><div><h4 class="font-bold text-sm">${d}</h4><p class="text-xs text-slate-500">${n} registered member${n===1?'':'s'}</p></div></button>`}).join('')}
+function deptFilter(n){$('q-members').value=n;go('members');renderModule('members')}
+function repLines(){const s=st(),g=x=>db.members.filter(m=>m.gender===x).length;return[['Membership','fa-users','blue',[['Total members',db.members.length],['Male',g('Male')],['Female',g('Female')]]],['Attendance','fa-clipboard-user','emerald',[['Services logged',s.n],['Average attendance',s.avg],['Total visitors',sum(db.attendance,a=>a.visitors)]]],['Finance','fa-hand-holding-dollar','amber',[['Income',money(s.inc)],['Expenses',money(s.exp)],['Net balance',money(s.inc-s.exp)]]],['Pledges','fa-piggy-bank','yellow',[['Pledged',money(s.pl)],['Paid',money(s.pd)],['Outstanding',money(s.pl-s.pd)]]]]}
+function renderReports(){$('repCards').innerHTML=repLines().map(([t,ic,c,ls])=>`<div class="bg-white p-5 rounded-xl border shadow-sm"><i class="fa-solid ${ic} text-3xl text-${c}-600 mb-3"></i><h3 class="font-bold text-sm">${t}</h3><ul class="text-xs text-slate-600 mt-2 space-y-1">${ls.map(l=>`<li class="flex justify-between gap-2"><span>${l[0]}</span><b>${l[1]}</b></li>`).join('')}</ul></div>`).join('')}
+function printReport(){modal('Executive Summary Report',`<div class="text-xs space-y-4"><div><h2 class="text-lg font-bold" data-church>${esc(db.settings.churchName)}</h2><p class="text-slate-500">Generated ${new Date().toLocaleDateString('en-KE',{dateStyle:'full'})}</p></div>${repLines().map(([t,,,ls])=>`<div><h4 class="font-bold border-b pb-1 mb-1">${t}</h4>${ls.map(l=>`<div class="flex justify-between py-0.5"><span class="text-slate-600">${l[0]}</span><b>${l[1]}</b></div>`).join('')}</div>`).join('')}<div><h4 class="font-bold border-b pb-1 mb-1">Members by department</h4>${[...DEPTS,'General Member'].map(d=>`<div class="flex justify-between py-0.5"><span class="text-slate-600">${d}</span><b>${db.members.filter(m=>m.department===d).length}</b></div>`).join('')}</div><div class="flex justify-end gap-2 pt-3 border-t"><button class="btn border" onclick="closeModal()">Close</button><button class="btn bg-blue-900 text-white" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button></div></div>`,1)}
+function renderSettingsForm(){$('setFields').innerHTML=SETF.map(([k,l])=>`<div><label class="block text-xs font-semibold text-slate-600 mb-1">${l}</label><input id="s_${k}" class="inp" value="${esc(db.settings[k])}" required></div>`).join('')}
+function saveSettings(e){e.preventDefault();SETF.forEach(([k])=>db.settings[k]=$('s_'+k).value.trim());persist();renderAll();toast('Settings saved')}
+function applySettings(){const s=db.settings;document.title=s.churchName+' — Management System';$$('[data-church]').forEach(e=>e.textContent=s.churchName);$$('[data-loc]').forEach(e=>e.textContent=`${s.town}, ${s.ward}, ${s.county}, ${s.country}`)}
+
+/* ---------- Admin console ---------- */
+function renderAdmin(){const el=$('adminBody');
+ if(!adm){el.innerHTML=`<div class="max-w-md mx-auto bg-white p-8 rounded-2xl border shadow text-center space-y-3"><div class="w-16 h-16 mx-auto rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-2xl"><i class="fa-solid fa-lock"></i></div><h3 class="font-bold text-lg">Administrator access required</h3><p class="text-xs text-slate-500">Unlock to view, edit and delete any record, and to manage backups and the password.</p><button class="btn bg-slate-900 text-white" onclick="needAdmin(()=>{})">Unlock admin console</button></div>`;return}
+ const m=M[adminTab];
+ el.innerHTML=`<div class="bg-emerald-900 text-white p-4 rounded-xl flex items-center justify-between gap-3"><div class="flex items-center gap-3"><i class="fa-solid fa-shield-halved text-2xl text-emerald-300"></i><div><h3 class="font-bold text-sm">Admin access granted</h3><p class="text-xs text-emerald-200">You can edit or delete every record in the system.</p></div></div><button class="btn bg-emerald-800 border border-emerald-600 text-white" onclick="lock()">Lock</button></div>
+ ${pw()==='admin123'?'<div class="bg-amber-50 border border-amber-200 text-amber-800 text-xs p-3 rounded-xl"><i class="fa-solid fa-triangle-exclamation"></i> You are still using the default password. Change it below before sharing this system.</div>':''}
+ <div class="bg-white rounded-xl border shadow-sm"><div class="p-3 border-b flex flex-wrap gap-2">${Object.keys(M).map(k=>`<button onclick="adminTab='${k}';aqv='';renderAdmin()" class="px-3 py-1.5 rounded-lg text-xs font-semibold ${k===adminTab?'bg-blue-900 text-white':'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${M[k].l} (${db[k].length})</button>`).join('')}</div>
+ <div class="p-3 flex gap-2 flex-wrap items-center justify-between"><input id="aq" class="inp sm:w-64" placeholder="Search ${m.l.toLowerCase()}..." value="${esc(aqv)}" oninput="aqv=this.value;adminRows()"><button class="btn bg-blue-900 text-white" onclick="openForm('${adminTab}')"><i class="fa-solid fa-plus"></i> Add ${m.n}</button></div><div id="arows"></div></div>
+ <div class="grid md:grid-cols-2 gap-4">
+  <div class="bg-white p-5 rounded-xl border shadow-sm space-y-3"><h4 class="font-bold text-sm"><i class="fa-solid fa-download text-blue-600"></i> Backup &amp; restore</h4><p class="text-xs text-slate-500">Data lives in this browser only. Download a backup regularly and keep it somewhere safe.</p><div class="flex flex-wrap gap-2"><button class="btn bg-blue-900 text-white" onclick="exportDB()">Download JSON backup</button></div><input type="file" accept=".json" onchange="imp(this)" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700"></div>
+  <form onsubmit="chpw(event)" class="bg-white p-5 rounded-xl border shadow-sm space-y-3"><h4 class="font-bold text-sm"><i class="fa-solid fa-key text-amber-600"></i> Change admin password</h4><input id="np" type="password" minlength="6" required placeholder="New password (6+ characters)" class="inp" autocomplete="new-password"><button class="btn bg-slate-900 text-white">Update password</button></form></div>
+ <div class="bg-rose-50 p-5 rounded-xl border border-rose-200 flex flex-col md:flex-row md:items-center justify-between gap-3"><div><h4 class="font-bold text-rose-900 text-sm">Danger zone</h4><p class="text-xs text-rose-700">Clear everything to start fresh, or reload the sample records.</p></div><div class="flex flex-wrap gap-2"><button class="btn bg-white border border-rose-300 text-rose-700" onclick="resetData(0)">Restore sample data</button><button class="btn bg-rose-600 text-white" onclick="resetData(1)">Clear all data</button></div></div>
+ <details class="bg-white rounded-xl border shadow-sm"><summary class="p-4 font-bold text-sm cursor-pointer">Raw database inspector</summary><pre class="m-4 mt-0 bg-slate-900 text-emerald-400 p-4 rounded-xl text-xs overflow-auto max-h-96">${esc(JSON.stringify(db,null,2))}</pre></details>`;
+ adminRows()}
+function adminRows(){if($('arows'))$('arows').innerHTML=table(adminTab,flt(adminTab,aqv))}
+function exportDB(){dl(`FGCK_Mamba_Backup_${today()}.json`,JSON.stringify(db,null,2),'application/json');toast('Backup downloaded')}
+function imp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{let d;try{d=JSON.parse(r.result);if(!d||typeof d!=='object')throw 0}catch{return toast('That file is not a valid backup','err')}confirmBox('Restoring will replace ALL current data with the contents of this file. Continue?',()=>{db=norm(d);persist();renderAll();renderSettingsForm();toast('Backup restored')})};r.readAsText(f);i.value=''}
+function chpw(e){e.preventDefault();localStorage.setItem(PWK,$('np').value);renderAdmin();toast('Admin password updated')}
+function resetData(clear){confirmBox(clear?'Delete ALL records? Export a backup first if you may need them.':'Replace all current data with the sample records?',()=>{const s=db.settings;db=norm(clear?{settings:s}:JSON.parse(JSON.stringify(DEF)));persist();renderAll();renderSettingsForm();toast(clear?'All data cleared':'Sample data restored')})}
+
+/* ---------- Layout + routing ---------- */
+function renderAll(){renderDashboard();Object.keys(M).forEach(renderModule);renderDepts();renderReports();renderAdmin();applySettings()}
+function show(k){if(!$(k)||!$(k).classList.contains('page'))k='dashboard';$$('.page').forEach(s=>s.classList.add('hidden'));$(k).classList.remove('hidden');$$('.nav').forEach(a=>a.classList.toggle('active',a.dataset.k===k));side(0);$('main').scrollTop=0}
+function go(k){if(location.hash==='#'+k)show(k);else location.hash=k}
+const head=(t,s)=>`<div><h2 class="text-2xl font-bold">${t}</h2><p class="text-xs text-slate-500">${s}</p></div>`;
+function secHTML(k){const m=M[k];return `<section id="${k}" class="page hidden space-y-4"><div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">${head(m.t,m.s)}<div class="flex gap-2 flex-wrap"><input id="q-${k}" oninput="renderModule('${k}')" placeholder="Search..." class="inp sm:w-56" aria-label="Search ${m.l}"><button class="btn bg-blue-900 text-white" onclick="openForm('${k}')"><i class="fa-solid fa-plus"></i> ${m.a}</button><button class="btn bg-white border text-slate-700" onclick="csv('${k}')" title="Export CSV"><i class="fa-solid fa-file-csv"></i> CSV</button></div></div><div class="bg-white rounded-xl border shadow-sm overflow-hidden"><div id="n-${k}" class="p-3 bg-slate-50 border-b text-xs font-semibold text-slate-600"></div><div id="t-${k}"></div></div></section>`}
+function build(){
+ const Q=[['members','fa-user-plus','blue','Add Member'],['attendance','fa-clipboard-list','emerald','Record Attendance'],['finance','fa-file-circle-plus','amber','Record Transaction'],['events','fa-calendar-plus','indigo','Create Event'],['visitors','fa-address-book','teal','Add Visitor']];
+ const mini=(t,id,h)=>`<div class="bg-white p-5 rounded-xl border shadow-sm"><div class="flex justify-between items-center mb-3"><h4 class="font-bold text-sm">${t}</h4><a href="#${h}" class="text-xs text-blue-600 font-semibold hover:underline">View all</a></div><div class="overflow-x-auto"><table class="w-full text-xs text-left"><tbody id="${id}" class="divide-y divide-slate-100"></tbody></table></div></div>`;
+ $('main').innerHTML=`
+ <section id="dashboard" class="page space-y-6">
+  <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl p-6 text-white shadow-xl flex flex-col md:flex-row justify-between items-center gap-6"><div class="space-y-2 text-center md:text-left"><span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs px-3 py-1 rounded-full font-semibold">Official portal</span><h1 class="text-2xl md:text-3xl font-extrabold tracking-tight uppercase" data-church></h1><p class="text-slate-300 text-sm" data-loc></p></div><div class="w-20 h-20 rounded-full bg-white/10 border-2 border-amber-400/50 flex items-center justify-center text-amber-400 text-3xl shrink-0"><i class="fa-solid fa-church"></i></div></div>
+  <div id="stats" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+  <div><h3 class="font-bold mb-3"><i class="fa-solid fa-bolt text-amber-500"></i> Quick actions</h3><div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">${Q.map(([k,i,c,l])=>`<button onclick="quick('${k}')" class="bg-white p-4 rounded-xl border hover:border-amber-500 hover:shadow-md transition text-center"><i class="fa-solid ${i} text-2xl text-${c}-600 mb-2 block"></i><span class="text-xs font-semibold">${l}</span></button>`).join('')}<button onclick="go('reports')" class="bg-white p-4 rounded-xl border hover:border-amber-500 hover:shadow-md transition text-center"><i class="fa-solid fa-chart-pie text-2xl text-rose-600 mb-2 block"></i><span class="text-xs font-semibold">View Reports</span></button></div></div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">${mini('Recent members','dm','members')}${mini('Recent transactions','df','finance')}</div>
+ </section>
+ ${Object.keys(M).map(secHTML).join('')}
+ <section id="departments" class="page hidden space-y-4">${head('Departments & Ministries','Select a ministry to see its members.')}<div id="deptsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div></section>
+ <section id="reports" class="page hidden space-y-4"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">${head('Administrative Reports','Live summaries of members, attendance, finances and pledges.')}<button onclick="printReport()" class="btn bg-slate-900 text-white"><i class="fa-solid fa-print"></i> Print summary report</button></div><div id="repCards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"></div></section>
+ <section id="admin" class="page hidden space-y-4">${head('Admin Portal & Database Management','Edit any record, back up, restore or reset the system.')}<div id="adminBody" class="space-y-4"></div></section>
+ <section id="settings" class="page hidden space-y-4">${head('Church Profile & Settings','Church details used across the portal and reports.')}<form onsubmit="saveSettings(event)" class="bg-white p-5 rounded-xl border shadow-sm grid sm:grid-cols-2 lg:grid-cols-3 gap-4"><div id="setFields" class="contents"></div><div class="sm:col-span-2 lg:col-span-3"><button class="btn bg-blue-900 text-white"><i class="fa-solid fa-floppy-disk"></i> Save settings</button></div></form></section>
+ <footer class="mt-8 text-center text-xs text-slate-500 py-4"><div class="font-bold text-slate-700"><i class="fa-solid fa-church text-amber-500"></i> <span data-church></span></div><div data-loc></div><div class="text-[10px] text-slate-400 mt-1">&copy; ${new Date().getFullYear()} FGCK Mamba Management System</div></footer>`;
+ $('nav').innerHTML=NAV.map(([k,l,i])=>`<a href="#${k}" data-k="${k}" class="nav flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-slate-200 hover:bg-slate-800 transition"><i class="fa-solid ${i} w-5 text-amber-400"></i> ${l}</a>`).join('')}
+
+window.addEventListener('load',()=>{
+ build();renderSettingsForm();adminUI();renderAll();
+ $('today').textContent=new Intl.DateTimeFormat('en-KE',{dateStyle:'medium',timeZone:'Africa/Nairobi'}).format(new Date());
+ window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+ $('modal').addEventListener('mousedown',e=>{if(e.target.id==='modal')closeModal()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+ show(location.hash.slice(1)||'dashboard');
+});
+</script>
 </body>
 </html>
